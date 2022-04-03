@@ -1,0 +1,30 @@
+
+board is 10 cols 20 rows lines 
+
+
+
+
+each person can see a ghost of other boards 
+can only see top of board of other baords, rest is hidden
+
+piece lands can still rotate until the next pull, since the piece is in contact with another, it cant move down but is considered a move.
+rotate right only 
+
+game modes:
+    solo mode : 
+    multi : when a player destroys a line , opponents get 
+
+
+
+pieces move
+    steps
+    constant speed [BONUS: n speed]
+
+keys:
+
+r/l
+up : roatate only right 
+down : faster fall
+space auto fall (no extra rotate)
+
+BONUS: (modern tetris) key to switch pieces with a bonnus piece 
