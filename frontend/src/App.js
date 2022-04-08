@@ -1,9 +1,10 @@
-import Link from './components/Link';
+import Board from './components/Board';
+import { board1 } from './testing/backendData';
 
 function App() {
   return (
     <div>
-      Hi!
+      <Board boardData={board1}/>
     </div>
   );
 }

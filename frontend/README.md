@@ -1,6 +1,7 @@
 to launch project 
     1.npm install 
     2.npx yarn start
+    \n
     bye
 
 #-------------------------------------------------------------------------
