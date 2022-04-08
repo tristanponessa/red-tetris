@@ -18,7 +18,7 @@ function Board({ boardData, small, ghost }) {
   const rowSize = small ? sizes['SMALL'].rowSize : sizes['NORMAL'].rowSize;
   const colSize = small ? sizes['SMALL'].colSize : sizes['NORMAL'].colSize;
 
-  //found a good candidate for dumb IFFE to avoid having var and fn (used only once) to have same name
+  //found a good candidate for dumb IIFE to avoid having var and fn (used only once) to have same name
   const getFirstOccupiedRow = ((boardData) => {
       let rowNb = 0;
       for (let row of boardData) {
