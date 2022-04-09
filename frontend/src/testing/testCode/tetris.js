@@ -34,7 +34,7 @@ class Board {
 
 class Piece {
 
-    static tetriminioes = {
+    static tetriminoes = {
             rotationKeys : ['horizontal', 'd90', 'vertical', 'd180'],
             /* ==== */
             I : {
@@ -85,10 +85,10 @@ class Piece {
 
         }
 
-        constructor(tetriminosBlueprint) {
+        constructor() {
         
-            this.name = this.randomProperty(tetriminosBlueprint, 'key');
-            this.curBlueprint = tetriminosBlueprint[this.name]; //ref
+            this.name = this.randomProperty(Piece.tetriminoes, 'key');
+            this.curBlueprint = Piece.tetriminoes[this.name]; //ref
             this.rotKeys = Object.keys(this.curBlueprint.OffsetsDynamic);
             this.curRotation = 'horizantal';
             this.curOffsets = this.curBlueprint.OffsetsDynamic[this.curRotation] //copy {00,11,21,01}
@@ -118,7 +118,7 @@ class Piece {
                 
                 /* clean before placing piece */
                 for (oldcord of this.oldOffsets) {
-                    board[oldcord + oldPos.y][oldcord + oldPos.x] = this.tetriminioes.empty;
+                    board[oldcord + oldPos.y][oldcord + oldPos.x] = Piece.tetriminoes.empty;
                 }
                 for (cord of this.curOffsets) {
                     /* if in contact */
@@ -127,10 +127,13 @@ class Piece {
         }
         
         landed(board) {
+            inContact = 0;
             for (cord of this.curOffsets) {
-                if (board[cord.y + this.curPos][cord.x + this.curPos] !== this.tetriminioes.empty &&
-                    this.offsetsDrawing[cord.y][cord.x] !== this.tetriminioes.empty)
-                    return ?;
+                if (board[cord.y + this.curPos + 1][cord.x + this.curPos] !== undefined &&
+                    board[cord.y + this.curPos + 1][cord.x + this.curPos + 1] !== undefined &&
+                    board[cord.y + this.curPos + 1][cord.x + this.curPos] !== Piece.tetriminoes.empty &&
+                    this.offsetsDrawing[cord.y][cord.x] !== Piece.tetriminoes.empty)
+                    inContact
             }
         }
     
