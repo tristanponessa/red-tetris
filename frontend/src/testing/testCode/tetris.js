@@ -80,20 +80,36 @@ class Piece {
             /*   ==     */
             O : null,
             /* XXXXXXXXXX */
-            Indestructible : 'X',
+            indestructible : 'X',
             empty: '-'
 
         }
 
         constructor() {
-        
-            this.name = this.randomProperty(Piece.tetriminoes, 'key');
             this.curBlueprint = Piece.tetriminoes[this.name]; //ref
             this.rotKeys = Object.keys(this.curBlueprint.OffsetsDynamic);
+            newPiece();
+        }
+
+        newPiece() {
+            /* player cur piece is random */
+            this.name = this.randomProperty(Piece.tetriminoes, 'key');
             this.curRotation = 'horizantal';
             this.curOffsets = this.curBlueprint.OffsetsDynamic[this.curRotation] //copy {00,11,21,01}
             this.curPos = {y: 0, x:4}; //piece is placed around your pointer
-            
+        }
+
+        PieceCords(pos=null, offsets=null) {
+
+            const cords = [];
+            const pos = (!pos) ? this.curPos : pos;
+            const offsets = (!offsets) ? this.curOffsets : offsets;
+
+            for (let i = 0; i < offsets.length; i++)
+                cords.push({y: pos.y + offsets[i].y, 
+                            x: pos.x + offsets[i].x});
+        
+            return cords;
         }
     
         rotateRight() {
@@ -102,39 +118,96 @@ class Piece {
         }
     
         move(board, direction) {
+            /*
+                 move only if no obstacle : 
+                 1.inContact   do nothing
+                 2.landed  gen new piece
+            */
+            
+            const attempBoard = [...board];
+            const attemptMove = {...this.curPos};
+            let attempCords;
+            let attemptRotation; 
+            let attemptOffsets;
+            
+            if (direction === 'up') {
+                attemptRotation = this.nextRotation();
+                attemptOffsets = Piece.tetriminoes.OffsetsDynamic[attemptRotation];
+                //doesn't move
+            }
+            else if (direction === 'down')
+                attemptMove.y += 1;
+            else if (direction === 'left')
+                attemptMove.x -= 1;
+            else if (direction === 'right')
+                attemptMove.x += 1;
+            
+            attempCords = this.PieceCords(attemptMove, attemptOffsets);
 
-            oldOffsets = this.oldCords //ref copy? we need copy
-            oldPos = this.curPos; //ref copy?
+            const obstacles = this.Obstacles(board);
+            //IF y NEW PIECE
+            if (obstacles.includes('Y'))
 
-            if (!this.landed()) {
-                if (direction === 'up')
-                    this.rotateRight();
-                if (direction === 'down')
-                    this.curPos.y += 1;
-                if (direction === 'left')
-                    this.curPos.x -= 1;
-                if (direction === 'right')
-                    this.curPos.x += 1;
-                
-                /* clean before placing piece */
-                for (oldcord of this.oldOffsets) {
-                    board[oldcord + oldPos.y][oldcord + oldPos.x] = Piece.tetriminoes.empty;
-                }
-                for (cord of this.curOffsets) {
-                    /* if in contact */
-                    board[this.curPos + cord.y][this.curPos + cord.x] = this.name;
-                }
+            if (obstacles.includes('+X'))
+            if (obstacles.includes('-X'))
+            
+            
+
+
+            /*if (typeofLanded === 'inContact')
+                return ; //do nothing
+            else if (typeofLanded === 'landed') {
+                this.draw();
+                this.newPiece();
+            }
+            else
+                this.draw();
+            */
+        }
+
+        draw(board) {
+            board = [...board];
+            const oldOffsets = {...this.curOffsets}
+            const oldPos = {...this.curPos};
+
+            /* clean before placing piece */
+            for (oldcord of this.oldOffsets) {
+                board[oldcord + oldPos.y][oldcord + oldPos.x] = Piece.tetriminoes.empty;
+            }
+            for (cord of this.curOffsets) {
+                /* if in contact */
+                board[this.curPos + cord.y][this.curPos + cord.x] += this.name; //evaluates if yourPiece P '-P' no touch nor contact or 'ZP' in contact
+            }
+            return board
         }
         
-        landed(board) {
-            inContact = 0;
-            for (cord of this.curOffsets) {
-                if (board[cord.y + this.curPos + 1][cord.x + this.curPos] !== undefined &&
-                    board[cord.y + this.curPos + 1][cord.x + this.curPos + 1] !== undefined &&
-                    board[cord.y + this.curPos + 1][cord.x + this.curPos] !== Piece.tetriminoes.empty &&
-                    this.offsetsDrawing[cord.y][cord.x] !== Piece.tetriminoes.empty)
-                    inContact
+        Obstacles(board) {
+            /* if any piece at edge or on other piece */
+            /* for each piece[x4] look +y +x -x */
+
+            const curCords = this.PieceCords();
+            let BoardNextY;
+            let BoardNextX;
+            let BoardPrevX;
+            const obstacles = [];
+            //let pieceObstacle;
+
+            for (let i = 0; i < curCords.length; i++) {
+
+                //pieceObstacle = [];
+                BoardNextY = board[curCords.y + 1][curCords.x];
+                BoardNextX = board[curCords.y][curCords.x + 1];
+                BoardPrevX = board[curCords.y][curCords.x - 1];
+
+                if (BoardNextY !== Piece.tetriminoes.empty)
+                    obstacles.push('Y');
+                if (BoardNextX !== Piece.tetriminoes.empty)
+                    obstacles.push('+X');
+                if (BoardPrevX !== Piece.tetriminoes.empty)
+                    obstacles.push('-X');
+                //obstacles.push(pieceObstacle);
             }
+            return obstacles;
         }
     
         /* static fns dont use this */
@@ -209,9 +282,7 @@ class Game {
 /* game fns */
 
 
-function newPiece() {
-    /* player cur piece is random */
-}
+
 
 function looseCondition() {
     return /* if pulldown done and piece outside bounds */
@@ -339,5 +410,27 @@ function fakeGame() {
 function fakeTerminalFront() {
     instead of react display threw node.js terminal
 }
+
+
+
+
+
+
+if ([BoardNextY, BoardNextX, BoardPrevY].map( x => !notZone.includes(x)))
+
+            if (board[cord.y + this.curPos + 1][cord.x + this.curPos] !== undefined &&
+                board[cord.y + this.curPos + 1][cord.x + this.curPos + 1] !== undefined &&
+                board[cord.y + this.curPos + 1][cord.x + this.curPos] !== Piece.tetriminoes.empty &&
+                this.offsetsDrawing[cord.y][cord.x] !== Piece.tetriminoes.empty)
+            }
+
+            return 'landed' or'inContact'
+            
+
+
+            for (let y = 0; y < board.length; y++) 
+            for (let x = 0; x < board[y].length; x++) {
+                if (!board[y][x].includes(Piece.tetriminoes.empty) &&
+                    board[y][x].includes(this.name))
 
 */
