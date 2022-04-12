@@ -16,7 +16,7 @@ Player has
 class Game {
 
     constructor(playerNames) {
-        this.players = playerNames.map(n => new Player(n))
+        this.players = playerNames.map(n => new Player(this, n))
         //one player has the launch game for all method 
         //run each game
     }
@@ -25,43 +25,47 @@ class Game {
 
 class Player {
     
-    constructor(name) {
+    constructor(gameObj, name) {
+        this.gameObj = gameObj;
         this.name = name;
         this.gravity = 10; //difficulty pull down s 
         this.lost = false;
         this.board = new Board();
         this.score = 0;
 
-        this.
+        this.keyBindings = {
+            'up' : () => Board.move('up'),
+            'down': () => Board.move('down'),
+            'right': () => Board.move('right'),
+            'left': () => Board.move('left')
+            //space
+        }
 
         this.runGame();
     }
 
 
-    runGame() { 
+    async runGame() { 
 
         setInterval(this.gravity, () => this.board.pullDown())
-        Eventlistener(RECEIVE MALUS (N) => this.drawMalus(N))
-
-        while (1) {
+        //Eventlistener(RECEIVE MALUS (N) => this.drawMalus(N))
+        await 
+        
             
             if (this.board.looseCondition()) {
                 this.lost = true;
                 return ;
             }
 
-            
+            if (0 < n = this.board.tetrisMove())
+                this.GameObj.players.map(p => p.drawMalus(n))
 
-            KEY MOVE :
-                
-                n = if tetrisMove
-                apply MALUS to other PLAYERS 
-
-
+            if (key = keyPress() in Object.keys(this.keyBindings)) {
+                this.keyBindings[key];
+            }
 
 
 
-            
 
 
         }
@@ -90,8 +94,9 @@ class Board {
         //board data
         this.rowN = 20;
         this.colN = 10;
+        this.limits = {minY:0, maxY: 20, minX: 0, maxX: 10}
         this.startPos = {y: 0, x: 4};
-        this.hiddenRows = [0, 1, 2, 3];
+        this.hiddenRows = 3; //0 -> 3
         this.board = Array.from(Array(20), ()=>new Array(10).fill(Piece.tetriminoes.empty))
         this.blockedRowsStart = Board.bluePrint.rowN;
 
@@ -102,24 +107,33 @@ class Board {
         //this.calcPieceCords;
     }
 
-    *iter(type='col', order='+', startY=0, steps=null) {
+    /**
+     * @param {string} type row col box 
+     * @param {string} order + -
+     */
+    *iter(type='box', order='+') {
+        
         //naming conventions: 
         //when calling type row , usually use row of iter('row') { row.nb } instead of row.y 
         //when calling cord of iter() { cord.y or .x }
-        if (order === '+') {
-            for (let y = startY; y < Board.bluePrint.rowN; y++) {
-                if (type === 'row')
-                    yield {nb:y, value:this.board[y]} 
-                for (let x = 0; x < Board.bluePrint.colN; x++)
-                    yield {y, x, value:this.board[y][x]}; 
-            }
-        }
 
-        if (order === '-') {
-            for (let y = Board.bluePrint.rowN; y > 0; y--) {
+        startY = '+' ? this.limits.maxY : this.limits.minY;
+        limitY = '+' ? this.limits.maxY : this.limits.minY;
+        startX = '+' ? this.limits.maxY : this.limits.minX;
+        limitX = '+' ? this.limits.maxY : this.limits.minX;
+        step = '+' ? 1 : -1;
+
+        if (order === 'col') {
+            //col first iter than row
+            for (let i = startX; i !== limitX; i += step) 
+                for (let i = startY; i !== limitY; i += step) {
+                    yield {y, x, value:this.board[y][x]};
+                }
+        } else {
+            for (let i = startY; i !== limitY; i += step) {
                 if (type === 'row')
                     yield {nb:y, value:this.board[y]}
-                for (let x = Board.bluePrint.colN; x > 0; x--)
+                for (let i = startX; i !== limitX; i += step)
                     yield {y, x, value:this.board[y][x]};
             }
         }
@@ -130,7 +144,7 @@ class Board {
         /* if any piece cord is out of bounds */
         /* determined on draw */
         if (this.curPiece.lives === 0 && 
-            Board.bluePrint.hiddenRows.includes(this.curPiece.getHighestY()))
+            Board.bluePrint.hiddenRows > this.curPiece.getHighestY())
             return true;
     }
 
@@ -153,8 +167,10 @@ class Board {
         //you receive malus just writes over
         const indestructibleRow = new Array(Board.bluePrint.colN).fill(Piece.tetriminoes.indestructible);
         this.blockedRowsStart -= n - 1;
-        for (let row of this.iter('row', '-', Board.bluePrint.rowN, this.blockedRowsStart))
-            row.value = indestructibleRow; //if dont get ref , use this.board[row.y] = 
+        for (let row of this.iter('row')) {
+            if (row.y >= this.blockedRowsStart)
+                row.value = indestructibleRow; //if dont get ref , use this.board[row.y] = 
+        }
     }
 
     move(direction) {
@@ -218,7 +234,52 @@ class Board {
                 }
         }
 
+        /*
+        function findObstacles2() {
+            if (this.curPiece.lowestY in floor())
+                this.pieceLooseLife();
+            if ( in [])
+                return false;//dont do anything
+            
+        }*/
+
+
+
     }
+
+    //floor changes ,   top right left ground static 
+
+    floor() {
+        // look down col, the piece's level is the ground and if none, the gorund itself
+        const floor = []; 
+        for (col of this.iter(undefined, 'col')) {
+            if (col.value !== Piece.tetriminoes.empty || col.y === this.limits - 1) //on the ground of board
+                floor.push({y:col.y, x:col.x});
+        }
+    }
+
+    top() {
+        top = []
+        for (box of this.iter())
+            if (box.y === this.hiddenRows)
+                return top;
+            this.top.push({y:box.y, x:box.x});
+    }
+
+    rightSide() {
+        right = []
+        for (let y = 0; y < this.limits.maxY; y++)
+            right.push({y, x:this.limits.maxX});
+        return right;
+    }
+
+    leftSide() {
+        left = []
+        for (let y = 0; y < this.limits.maxY; y++)
+            left.push({y, x:this.limits.minX});
+        return left;
+    }
+
 
     pullDown() {
         //for set interval auto move
@@ -367,6 +428,28 @@ class Piece {
         }
         return lowestY;
     }
+
+    static getMostRight() {
+        /* check if landed */
+        let HighestX = Board.bluePrint.colN;
+        for (let i = 0; i < this.curPos; i++) {
+            if (this.curPos[i].x < HighestX)
+                HighestX = this.curPos[i].x//{...this.curPos[i]};
+        }
+        return HighestX;
+    }
+
+    static getMostRight() {
+        /* check if landed */
+        let lowestX = 0;
+        for (let i = 0; i < this.curPos; i++) {
+            if (this.curPos[i].x > lowestX)
+                lowestX = this.curPos[i].x//{...this.curPos[i]};
+        }
+        return lowestX;
+    }
+
+
 }
 
 
