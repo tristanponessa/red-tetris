@@ -1,23 +1,21 @@
 i still have to do npx jest 
 instead of yarn jest why?
+(options ot trigger babel js version? ts version?)
 
 # to launch project 
- ! have to launch everytime a new terminal loads
-    NVM node version manager [bypasses sudo]
+NVM node version manager [bypasses sudo] (! have to launch everytime a new terminal loads)
     touch ~/.bash_profile
-    8  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
     source ~/.bash_profile
-   11  nvm install 16
-   node -v 
+    nvm install 16
+    node -v 
 
-   
 
-    0.1. 
-    1.npm install --global yarn\ [to avoid npm install yarn that generates a package.lock along with yarn.lock which is nt recommended by yarn]
-    2.npx yarn install\
-    3.npx jest 
-    4.npx yarn start
-    (options ot trigger babel js version? ts version?)
+    npm install --global yarn [to avoid npm install yarn, that generates a package.lock along with yarn.lock which is not recommended by yarn]\
+    npx yarn install\
+    npx jest \
+    npx yarn start \
+    
 
 VSC extenSIONS:
 
@@ -40,6 +38,7 @@ DEPENDENCIES:
 
 
 REACT AND TYPESCRIPT 
+    react transpiles , we only want ts to type check : 
 
 
 # -------------------------------------------------------------------------
