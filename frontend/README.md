@@ -1,10 +1,48 @@
-to launch project 
-    1.npm install 
-    2.npx yarn start
-    \n
-    bye
+i still have to do npx jest 
+instead of yarn jest why?
 
-#-------------------------------------------------------------------------
+# to launch project 
+ ! have to launch everytime a new terminal loads
+    NVM node version manager [bypasses sudo]
+    touch ~/.bash_profile
+    8  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    source ~/.bash_profile
+   11  nvm install 16
+   node -v 
+
+   
+
+    0.1. 
+    1.npm install --global yarn\ [to avoid npm install yarn that generates a package.lock along with yarn.lock which is nt recommended by yarn]
+    2.npx yarn install\
+    3.npx jest 
+    4.npx yarn start
+    (options ot trigger babel js version? ts version?)
+
+VSC extenSIONS:
+
+
+DEPENDENCIES:
+
+    BABEL vs TS 
+    both transpilors 
+    were gonna TS for type support 
+
+    webpack: 
+    babel : [does react continue using it?]
+    typescript:
+
+    ts-jest:    in order for ts and jestto work together [does it install jest and ts alone?]
+    yarn add --dev @types/jest   to test types and pure ts func
+
+-check if everything works properly , and not ignore any features like between wepback ts or ts react ect....
+
+
+
+REACT AND TYPESCRIPT 
+
+
+# -------------------------------------------------------------------------
 
 
 # Getting Started with Create React App
