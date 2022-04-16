@@ -1,3 +1,9 @@
+a lot of research on how all this works 
+readme is not to point 
+https://dev.to/nikhilkumaran/don-t-use-create-react-app-how-you-can-set-up-your-own-reactjs-boilerplate-43l0
+
+
+
 i still have to do npx jest 
 instead of yarn jest why?
 (options ot trigger babel js version? ts version?)
