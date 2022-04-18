@@ -1,4 +1,4 @@
-import { Board } from './tetris';
+import { Board, Piece } from './tetris';
 
 test('board must be y20 x10', () => {
     const b : Board = new Board();
@@ -15,5 +15,20 @@ test('board filled empty', () => {
 
     for (;iy < b.y;iy++)
         for (;ix < b.x;ix++)
-            expect(b.curBoard[iy][ix]).toBe(Piece.empty);
+            expect(b.curBoard[iy][ix]).toBe(Piece.tetriminoes.empty);
+});
+
+test('piece I exists', () => {
+
+    const refI = Piece.tetriminoes.I;
+    
+    const up =    [{y:1, x:0}, {y:1, x:1}, {y:1, x:2}, {y:1, x:3}];
+    const right = [{y:0, x:2}, {y:1, x:2}, {y:2, x:2}, {y:3, x:2}];
+    const down =  [{y:2, x:0}, {y:2, x:1}, {y:2, x:2}, {y:2, x:3}];
+    const left =  [{y:0, x:1}, {y:1, x:1}, {y:2, x:1}, {y:3, x:1}];
+
+    except(refI.offsets.up).toBe(up);
+    except(refI.offsets.right).toBe(right);
+    except(refI.offsets.down).toBe(down);
+    except(refI.offsets.left).toBe(left);
 });

@@ -1,29 +1,21 @@
+import { Piece } from './Piece';
+
 export class Board {
+
     y : number;
     x : number;
     curBoard : string[][];
 
-    constructor () {
+    constructor() {
         this.y = 20;
         this.x = 10;
-        this.fillBoard();
-
-
-
+        this.curBoard = this.newBoard();
     }
 
-    fillBoard() {
-        this.curBoard
-    }
+    newBoard() : string[][] {
+        return Array.from(Array(this.y), 
+                    () => new Array(this.x).fill(Piece.tetriminoes.empty));
+    } 
 }
 
 
-export class Piece {
-
-    static tetriminoes : {
-        [key: string]: any,
-        readonly empty: string;
-    } = {
-        empty: '-'
-    };
-}
