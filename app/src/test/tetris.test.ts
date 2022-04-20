@@ -1,4 +1,5 @@
-import { Board, Piece } from './tetris';
+import { Board } from './tetris';
+import { Piece } from './Piece';
 
 test('board must be y20 x10', () => {
     const b : Board = new Board();
@@ -20,7 +21,7 @@ test('board filled empty', () => {
 
 test('piece I exists', () => {
 
-    const refI = Piece.tetriminoes.I;
+    const refI = new Piece('I');
     
     const up =    [{y:1, x:0}, {y:1, x:1}, {y:1, x:2}, {y:1, x:3}];
     const right = [{y:0, x:2}, {y:1, x:2}, {y:2, x:2}, {y:3, x:2}];
