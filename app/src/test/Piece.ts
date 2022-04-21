@@ -2,11 +2,9 @@ import { FixedLengthArray } from '../libft/global';
 
 type Coordinate = {y:number, x:number};
 
-type TetriminoRotations = {
-    [k : "up" | "down" | "right" | "left"] : FixedLengthArray<Coordinate, 4> //the 4 keys must exist or error 
-};
+type TetriminoRotations = Record<"up" | "down" | "right" | "left", FixedLengthArray<Coordinate, 4>>;
 
-interface TetriminoMap {
+type TetriminoMap = {
     [key: string]: Tetrimino | string | string[]
 };
 
@@ -21,7 +19,7 @@ export class Piece {
         empty: '-',
         /* ==== */
         I: {
-            drawing: [
+            drawing : [
                 ['-', 'D', 'B', '-'],
                 ['A', 'AD', 'AB', 'A'],
                 ['C', 'CD', 'CB', 'C'],
@@ -32,7 +30,7 @@ export class Piece {
 
     staticRef : TetriminoMap; //at this moment, its set to the cls and not instance
     curPiece : string;
-    rotLetters : [string, string, string, string];
+    rotLetters : [string, string, string, string]; //tuple of 4
     rotKeys : [string, string, string, string];
     offsets : TetriminoRotations;
 
@@ -44,8 +42,9 @@ export class Piece {
 
         if (letter)
             this.curPiece = letter;
-        else 
-            this.curPiece = this.randomPiece();
+        else
+            this.curPiece = '';
+            // this.curPiece = this.randomPiece();
         this.offsets = this.calcOffsetsFromDrawing();
     }
 
@@ -67,19 +66,21 @@ export class Piece {
     calcOffsetsFromLetter(rotLetter : string) : FixedLengthArray<Coordinate, 4> {
         
         const offsets : FixedLengthArray<Coordinate, 4> = [{y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}];
-        const drawing = (this.staticRef[this.curPiece] as Tetrimino).drawing ; //parent type passed any , when accessing drawing, results in error as any.drawing dont exist
+        const drawing = (this.staticRef[this.curPiece] as Tetrimino).drawing ; //parent type passed   string|string[]|Tetrimino , when accessing drawing, results in error as drawing is Tetrimino, not the entire union
 
-        for (let i = 0; i < offsets.length; i++) {
+        /* for (let i = 0; i < offsets.length; i++) { */
+        let i = 0;
             for (let y = 0; y < drawing.length; y++) {
                 for (let x = 0; x < drawing[y].length; x++) {
-                    if (rotLetter === drawing[y][x]) {
+                    if (drawing[y][x].includes(rotLetter)) {
                         offsets[i].y = y;
                         offsets[i].x = x;
+                        i++;
                         
                     }
                 }
             }
-        }
+        
         return offsets;
     }
 }

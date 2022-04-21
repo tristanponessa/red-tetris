@@ -28,8 +28,8 @@ test('piece I exists', () => {
     const down =  [{y:2, x:0}, {y:2, x:1}, {y:2, x:2}, {y:2, x:3}];
     const left =  [{y:0, x:1}, {y:1, x:1}, {y:2, x:1}, {y:3, x:1}];
 
-    except(refI.offsets.up).toBe(up);
-    except(refI.offsets.right).toBe(right);
-    except(refI.offsets.down).toBe(down);
-    except(refI.offsets.left).toBe(left);
+    expect(refI.offsets.up).toStrictEqual(up);
+    expect(refI.offsets.right).toStrictEqual(right);
+    expect(refI.offsets.down).toStrictEqual(down);
+    expect(refI.offsets.left).toStrictEqual(left);
 });
