@@ -33,3 +33,43 @@ test('piece I exists', () => {
     expect(refI.offsets.down).toStrictEqual(down);
     expect(refI.offsets.left).toStrictEqual(left);
 });
+/*
+test('piece 4 blocks', () => {
+
+    const nbBlocks = 4;
+    let p;
+    for (let n in (Piece.tetriminoes.names as string[])) {
+        p = new Piece(n);
+        expect(p.offsets )
+    }
+
+    
+});
+*/
+
+/*
+test('pieces exist', () => {
+
+    const tetris =  [
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null,null,null],
+        [null,'I',   null,null,null,null,null,null,null,null],
+        [null,'I',   null,null,null,null,null,null,null,null],
+        [null,'I',   null,null,null,null,null,null,null,null],
+        [null,'I',   null,null,null,null,null,null,null,null]
+    ]
+});*/

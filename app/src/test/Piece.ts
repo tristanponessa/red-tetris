@@ -15,8 +15,14 @@ interface Tetrimino {
 export class Piece {
 
     static tetriminoes : TetriminoMap = {
+        /* 
+        *   a drawing represents all rotations possible 
+        *   1st rotation being A 2nd being B ....
+        */
         names: ['I', 'T', 'S', 'Z', 'J', 'L', 'O'],
+        indestructible : 'X',
         empty: '-',
+        new: '+',
         /* ==== */
         I: {
             drawing : [
@@ -25,6 +31,59 @@ export class Piece {
                 ['C', 'CD', 'CB', 'C'],
                 ['-', 'D', 'B', '-']
             ],
+        },
+         /*    =    */
+        /*   ===     */
+        T : {
+            drawing : [
+                ['-', 'ABC ', '-'],
+                ['ABD', 'ABCD ', 'ACD'],
+                ['-', 'BCD', '-'],
+            ]
+        },
+        /*    ==    */
+        /*   ==     */
+        S: {
+            drawing : [
+                ['D','AB','A'],
+                ['AD','ABCD','CB'],
+                ['C','CD','B']
+            ]
+        }, 
+        /*  ==      */
+        /*   ==     */
+        Z: {
+            drawing : [
+                ['A','AD','B'],
+                ['CD','DCAB','AB'],
+                ['D','BC','C']
+            ]
+        },
+        /*   =    */
+        /*   ===     */
+        J : {
+            drawing : [
+                ['A','BD','B'],
+                ['AC','DABC','CA'],
+                ['D','DB','C']
+            ]
+        },
+        /*     =   */
+        /*   ===     */
+        L : {
+            drawing : [
+                ['D','DB','A'],
+                ['AC','DCBA','CA'],
+                ['C','BD','B']
+            ]
+        },
+        /*   ==    */
+        /*   ==     */
+        O : {
+            drawing : [
+                ['ABCD', 'ABCD'],
+                ['ABCD', 'ABCD']
+            ]
         }
     };
 
@@ -56,19 +115,22 @@ export class Piece {
 
      /* search for cords from drawing of tetriminos*/
     calcOffsetsFromDrawing() : TetriminoRotations {
-        const rots : any = {};
+        const rot : Record<string, FixedLengthArray<Coordinate, 4>> = {}; //we dynamicly build the obj up to a TetrimoRot 
+        let rots : TetriminoRotations;
         for (let i = 0; i < this.rotLetters.length; i++) {
-           rots[this.rotKeys[i]] = this.calcOffsetsFromLetter(this.rotLetters[i]);
+           rot[this.rotKeys[i]] = this.calcOffsetsFromLetter(this.rotLetters[i]);
         }
+        rots = rot;
         return rots;
     }
 
     calcOffsetsFromLetter(rotLetter : string) : FixedLengthArray<Coordinate, 4> {
         
-        const offsets : FixedLengthArray<Coordinate, 4> = [{y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}];
-        const drawing = (this.staticRef[this.curPiece] as Tetrimino).drawing ; //parent type passed   string|string[]|Tetrimino , when accessing drawing, results in error as drawing is Tetrimino, not the entire union
+        const offsets : FixedLengthArray<Coordinate, 4> = 
+                    [{y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}];
+        //parent type passed   string|string[]|Tetrimino , when accessing drawing, results in error as drawing is Tetrimino, not the entire union
+        const drawing = (this.staticRef[this.curPiece] as Tetrimino).drawing ; 
 
-        /* for (let i = 0; i < offsets.length; i++) { */
         let i = 0;
             for (let y = 0; y < drawing.length; y++) {
                 for (let x = 0; x < drawing[y].length; x++) {
