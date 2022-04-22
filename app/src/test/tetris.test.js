@@ -2,17 +2,17 @@ import { Board } from './tetris';
 import { Piece } from './Piece';
 
 test('board must be y20 x10', () => {
-    const b : Board = new Board();
-    const y : number = 20;
-    const x : number = 10;
+    const b = new Board();
+    const y = 20;
+    const x = 10;
     expect(b.y).toBe(y);
     expect(b.x).toBe(x);
 });
 
 test('board filled empty', () => {
-    const b : Board = new Board();
-    let iy : number = 0;
-    let ix : number = 0;
+    const b = new Board();
+    let iy = 0;
+    let ix = 0;
 
     for (;iy < b.y;iy++)
         for (;ix < b.x;ix++)
@@ -33,19 +33,17 @@ test('piece I exists', () => {
     expect(refI.offsets.down).toStrictEqual(down);
     expect(refI.offsets.left).toStrictEqual(left);
 });
-/*
-test('piece 4 blocks', () => {
+
+test('pieces have 4 blocks', () => {
 
     const nbBlocks = 4;
     let p;
-    for (let n in (Piece.tetriminoes.names as string[])) {
+    for (let n in Piece.tetriminoes.names) {
         p = new Piece(n);
-        expect(p.offsets )
+        expect(p.offsets.length).toBe(nbBlocks);
     }
-
-    
 });
-*/
+
 
 /*
 test('pieces exist', () => {
