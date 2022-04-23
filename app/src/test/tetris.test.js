@@ -1,4 +1,4 @@
-import { Board } from './tetris';
+import { Board } from './Board';
 import { Piece } from './Piece';
 
 test('board must be y20 x10', () => {
@@ -65,10 +65,24 @@ test('pieces exist', () => {
 });
 
 
+test('piece random', () => {
+    /* we want uniks for 7 in the row */
+    let pieces;//new Array(100).fill(new Piece());
+    const names = Piece.tetriminoes.names
+    const counters = {'I' : 0, 'T' : 0, 'S' : 0, 'Z' : 0, 'J' : 0, 'L' : 0, 'O' : 0};
+
+    for (let i = 0; i < 100 / 7; i++) {
+        pieces = new Array(7).fill(new Piece().curPiece);
+        expect(new Set(pieces).size !== pieces.length).toStrictEqual(false); //check dups
+    }
+
+});
+
 /*
 test('pieces exist', () => {
 
     const tetris =  [
+
         [null,null,null,null,null,null,null,null,null,null],
         [null,null,null,null,null,null,null,null,null,null],
         [null,null,null,null,null,null,null,null,null,null],

@@ -1,3 +1,5 @@
+import { shuffle } from "./utils";
+
 export class Piece {
 
     static tetriminoes = {
@@ -73,6 +75,22 @@ export class Piece {
         }
     };
 
+    static randIter() {
+        /* inf iter */
+        let pieceNames = [];
+
+        const it = {
+            next() {
+                if (pieceNames.length === 0) 
+                    pieceNames = shuffle([...Piece.tetriminoes.names]);
+                return pieceNames.pop();
+           }
+        };
+        return it;
+    }
+
+    static randIt = Piece.randIter();
+
     constructor (letter) {
 
         this.staticRef = Piece.tetriminoes;
@@ -82,7 +100,7 @@ export class Piece {
         if (letter)
             this.curPiece = letter;
         else
-            this.curPiece = '';
+            this.curPiece = Piece.randIt.next();
             // this.curPiece = this.randomPiece();
         this.offsets = this.calcOffsetsFromDrawing();
     }
