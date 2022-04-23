@@ -34,13 +34,33 @@ test('piece I exists', () => {
     expect(refI.offsets.left).toStrictEqual(left);
 });
 
-test('pieces have 4 blocks', () => {
-
+test('pieces exist', () => {
+    /*
+    *   in ts, the type system would of tested if specific keys vals is 4 * 4
+    *   thanks to specific type 
+    *   in js we gotta check it here 
+    *   forEach tetriminoes ['I', 'T', 'S', 'Z', 'J', 'L', 'O']
+    *   1.check if keys are up down left right 
+    *   2.foreach key : check if array of 4 , 
+    *                   each array has a y x key , 
+    *                   each y x is greater than -1
+    *                   each no array is the same 
+    * */
     const nbBlocks = 4;
     let p;
-    for (let n in Piece.tetriminoes.names) {
+    for (let n of Piece.tetriminoes.names) {
         p = new Piece(n);
-        expect(p.offsets.length).toBe(nbBlocks);
+        const keys = Object.keys(p.offsets);
+        expect(keys).toStrictEqual(p.rotKeys);
+        const vals = Object.values(p.offsets);
+
+        vals.forEach(v => {
+            expect(v.length).toStrictEqual(nbBlocks);
+            expect(new Set(v).size !== v.length).toStrictEqual(false); //check dups
+            v.forEach(_v => expect(Object.keys(_v)).toStrictEqual(['y', 'x']))
+            v.forEach(_v => expect(_v.y).toBeGreaterThan(-1))
+            v.forEach(_v => expect(_v.x).toBeGreaterThan(-1))
+        });
     }
 });
 
