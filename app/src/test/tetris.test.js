@@ -93,16 +93,18 @@ test('place pieces on Board', () => {
         we dont care about rotation cause it doesnt matter if I left or Z up is outborders, we wanna test if we test one part of it outside
     */
 
-    const outOfZone1 = {y: -1, x: 0};
-    const outOfZone2 = {y: 0, x: -1};
-    const outOfZone3 = {y: -1, x: -1};
+    const outOfZone1 = {y: -100, x: 0};
+    const outOfZone2 = {y: 0, x: -100};
+    const outOfZone3 = {y: -100, x: -100};
     const outOfZone4 = {y: new Board().y, x: new Board().x}; //start at 0 so overlap 1
     const outOfZonePieceI = {y: new Board().y - 3, x: 0}; //one part should be outside bottom y maxY + 1 x 0
     const outOfZonePieceL = {y: 0, x: 0}; //one part should be outside 2 lefts 
-    const sameZoneAndOutOfZonePieceI = [{y: new Board().y - 2, x: 0}, {y: new Board().y - 3, x: 0}]
+    //const sameZoneAndOutOfZonePieceI = [{y: new Board().y - 2, x: 0}, {y: new Board().y - 3, x: 0}]
     const sameZonePieceI1 = [{y: 0, x: 0}, {y : 0, x : 0}] //with 2 Is
     const sameZonePieceI2 = [{y: 0, x: 0}, {y : 3, x : 0}] //with 2 Is
     const validZonePieceI1 = [{y: 0, x: 0}, {y : 4, x : 4}] //with 2 Is top of eachother
+
+    let b; //save board 
 
     function ExpectMove(res, boardX, attemptPos, noConditionMovePieceCords) {
         
@@ -117,6 +119,16 @@ test('place pieces on Board', () => {
         return b; //for chaining
     }
 
+    //same exact calc in Board, im wondering if thi sis really a test...
+    //a lot more things could happen in the object, here its isolated, 
+    //we make sure the calc stay intact
+    function expectedCords(pos, offs) {
+        return [{y: pos.y + offs[0].y, x: pos.x + offs[0].x},
+        {y: pos.y + offs[1].y, x: pos.x + offs[1].x},
+        {y: pos.y + offs[2].y, x: pos.x + offs[2].x},
+        {y: pos.y + offs[3].y, x: pos.x + offs[3].x}]
+    }
+
     //this is internal fn to 
     /*static Piece.GetCords() { 
         return this.offsets[this.curRotation] + this.playerPos;
@@ -126,10 +138,28 @@ test('place pieces on Board', () => {
     const offsL = new Piece('L').offsets.up;
 
     //test I and L
-    ExpectMove(false, 'newI', outOfZone1, [{y: outOfZone1.y + offsI[0].y, x: outOfZone1.x + offsI[0].x},
-                                            {y: outOfZone1.y + offsI[1].y, x: outOfZone1.x + offsI[1].x},
-                                            {y: outOfZone1.y + offsI[2].y, x: outOfZone1.x + offsI[2].x},
-                                            {y: outOfZone1.y + offsI[3].y, x: outOfZone1.x + offsI[3].x}]);
+    for (const z of [outOfZone1, outOfZone2, outOfZone3, outOfZone4]) {
+        for (const [k,v] of Object.entries({'I': offsI, 'L': offsL}))
+            ExpectMove(false, `new${k}`, z, expectedCords(z, v));
+    }
+    
+    ExpectMove(false, `newI`, outOfZonePieceI, expectedCords(outOfZonePieceI, offsI));
+    ExpectMove(false, `newL`, outOfZonePieceL, expectedCords(outOfZonePieceL, offsL));
+
+    b = ExpectMove(true, `newI`, sameZonePieceI1[0], expectedCords(sameZonePieceI1[0], offsI));
+    ExpectMove(false, b, sameZonePieceI1[1], expectedCords(sameZonePieceI1[1], offsI));
+
+    b = ExpectMove(true, `newI`, sameZonePieceI2[0], expectedCords(sameZonePieceI2[0], offsI));
+    ExpectMove(false, b, sameZonePieceI2[1], expectedCords(sameZonePieceI2[1], offsI));
+
+    b = ExpectMove(true, `newI`, validZonePieceI1[0], expectedCords(validZonePieceI1[0], offsI));
+    ExpectMove(true, b, validZonePieceI1[1], expectedCords(validZonePieceI1[1], offsI));
+
+    
+
+
+
+
 
 
 
