@@ -9,6 +9,7 @@ test('board must be y20 x10', () => {
     expect(b.x).toBe(x);
 });
 
+//test will be added at end when needed to draw
 test('board filled empty', () => {
     const b = new Board();
     let iy = 0;

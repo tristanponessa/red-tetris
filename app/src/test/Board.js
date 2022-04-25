@@ -7,7 +7,8 @@ export class Board {
         this.x = 10;
         this.startPos = {y: 0, x: Math.trunc(this.x / 2)} // in case we wanna change x to ex.11 in the futur, remove fractional part
         this.invisibleZoneRangeMaxY = 4; //cause the longest piece I is height 4
-        this.curBoard = this.newBoard();
+        this.curBoard = this.newBoard(); //for drawing to display
+        this.occupied = []; //[{name: y: x: } * maxPoss] only existant are present
         this.curPiece = new Piece(pieceLetter === undefined ? null : pieceLetter);
         this.playerPos = {...this.startPos};
     }
@@ -77,19 +78,9 @@ export class Board {
      * @returns {boolean} res.state  did update board or not
      * @returns {object} res.cords [{y: x: }  * 4] if moved cords
      */
-    placeCurPiece(pos) {   //direction
-
-        const res = {state: null, cords: null};
-
-        //SAVE
-        //const attemptRotation = curRotation;
-        //const prevPlayerPos = {...this.playerPos};
-        //const prevCurPieceCords = {...this.curPiece.cords};
-        //TRY
+    placeCurPiece(pos) {
         const testPlayerPos = pos;
         const testCurPieceCords = this.getPieceCords(this.curPiece.offsets[this.curPiece.curRotation], testPlayerPos);
-        const maxY = this.y; //for inner fns that dont have this
-        const maxX = this.x; //for inner fns that dont have this
 
         //if out of bounds dont try anything
         if (!testCurPieceCords.every(c => c.y > -1 && c.y < this.y 
@@ -112,56 +103,16 @@ export class Board {
         /* uses curPiece object to draw */
         /* checks if can place, if not returns lst of obstacles and does nothing */
         
-        const testBoard = [...this.curBoard];
-
-        for (let cord of testCurPieceCords) {
-            //testBoard[cord.y][cord.x] += this.curPiece.name;
-            testBoard[cord.y][cord.x] += '+'; //for current
-        }
-
-        //check if landed or inContact
-        const obstacles = findObstacles();
-        if (obstacles.length > 0) {
-            if (obstacles.includes(this.lowestY(testCurPieceCords))) {
-                res.state = false;
-                res.cords = testCurPieceCords;
-            }
-                //this.pieceLooseLife();
-            //else hit x and cant move
+        if (this.occupied.includes(testCurPieceCords)) {
+            return {state : false, cords : testCurPieceCords};
         } else { 
-            res.state = true;
-            res.cords = testCurPieceCords;
-            cleanTest(this);
-            update(this);
-        }
-
-        return res;
-
-        function cleanTest(thisRef) {
-            for (let cord of testCurPieceCords) {
-                if (testBoard[cord.y][cord.x] === '+-')
-                    testBoard[cord.y][cord.x] = thisRef.curPiece.name;
-            }
-        }
-
-        function update(thisRef) {
-            thisRef.curBoard = [...testBoard];
-            thisRef.playerPos = {...testPlayerPos};
-            //this.curRotation = attemptRotation;
-        }
-    
-        function findObstacles() {
-            /* get all floor cords */
-              //check lands
-            const obstacles = [];
-            for (let y = maxY - 1; y >= 0; y--)
-                for (let x = 0; x < maxX; x++) {
-                    if (testBoard[y][x].match(new RegExp(`[+][${Piece.tetriminoes.names}${Piece.tetriminoes.indestructible}]{1}`)))
-                        obstacles.push({y, x})
-            }
-            return obstacles;
+            this.occupied.push(testCurPieceCords);
+            this.playerPos = {...testPlayerPos};
+            return {state : true, cords : testCurPieceCords};
         }
     }
+
+    
 
     getPieceCords(offsets, pos) {
         
