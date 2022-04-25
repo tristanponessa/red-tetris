@@ -77,7 +77,7 @@ export class Board {
      * @returns {boolean} res.state  did update board or not
      * @returns {object} res.cords [{y: x: }  * 4] if moved cords
      */
-    move(pos) {   //direction
+    placeCurPiece(pos) {   //direction
 
         const res = {state: null, cords: null};
 
@@ -87,7 +87,14 @@ export class Board {
         //const prevCurPieceCords = {...this.curPiece.cords};
         //TRY
         const testPlayerPos = pos;
-        const testCurPieceCords = this.getPieceCords(this.offsets[this.curPiece.curRotation], testPlayerPos);
+        const testCurPieceCords = this.getPieceCords(this.curPiece.offsets[this.curPiece.curRotation], testPlayerPos);
+        const maxY = this.y; //for inner fns that dont have this
+        const maxX = this.x; //for inner fns that dont have this
+
+        //if out of bounds dont try anything
+        if (!testCurPieceCords.every(c => c.y > -1 && c.y < this.y 
+                                        && c.x > -1 && c.x < this.x))
+            return {state: false, cords: testCurPieceCords};
 
         /*
         if (direction === 'up') {
@@ -105,9 +112,9 @@ export class Board {
         /* uses curPiece object to draw */
         /* checks if can place, if not returns lst of obstacles and does nothing */
         
-        const testBoard = [...this.board];
+        const testBoard = [...this.curBoard];
 
-        for (let cord of this.testCurPieceCords) {
+        for (let cord of testCurPieceCords) {
             //testBoard[cord.y][cord.x] += this.curPiece.name;
             testBoard[cord.y][cord.x] += '+'; //for current
         }
@@ -124,34 +131,35 @@ export class Board {
         } else { 
             res.state = true;
             res.cords = testCurPieceCords;
-            cleanTest();
-            update();
+            cleanTest(this);
+            update(this);
         }
 
         return res;
 
-        function cleanTest() {
+        function cleanTest(thisRef) {
             for (let cord of testCurPieceCords) {
                 if (testBoard[cord.y][cord.x] === '+-')
-                    testBoard[cord.y][cord.x] = this.curPiece.name;
+                    testBoard[cord.y][cord.x] = thisRef.curPiece.name;
             }
         }
 
-        function update() {
-            this.board = [...testBoard];
-            this.playerPos = {...testPlayerPos};
+        function update(thisRef) {
+            thisRef.curBoard = [...testBoard];
+            thisRef.playerPos = {...testPlayerPos};
             //this.curRotation = attemptRotation;
         }
     
         function findObstacles() {
             /* get all floor cords */
               //check lands
-              const obstacles = [];
-              for (let y = this.y; y > 0; y--)
-                  for (let x = 0; x < this.x; x++) {
-                      if (testBoard[y][x].match(new RegExp(`+[${Piece.bluePrint.names}${Piece.bluePrint.indestructible}]{1}`)))
-                          obstacles.push({y, x})
-                }
+            const obstacles = [];
+            for (let y = maxY - 1; y >= 0; y--)
+                for (let x = 0; x < maxX; x++) {
+                    if (testBoard[y][x].match(new RegExp(`[+][${Piece.tetriminoes.names}${Piece.tetriminoes.indestructible}]{1}`)))
+                        obstacles.push({y, x})
+            }
+            return obstacles;
         }
     }
 
