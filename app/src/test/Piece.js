@@ -75,33 +75,50 @@ export class Piece {
         }
     };
 
-    static randIter() {
-        /* inf iter */
+    /*static randIter() {
+        
         let pieceNames = [];
 
         const it = {
             next() {
                 if (pieceNames.length === 0) 
                     pieceNames = shuffle([...Piece.tetriminoes.names]);
-                return pieceNames.pop();
+                return (pieceNames.pop());
            }
         };
         return it;
-    }
+    }*/
 
-    static randIt = Piece.randIter();
+    static randIter = class {
+
+        constructor() {
+            this.i = 0;
+            this.names = [...Piece.tetriminoes.names];
+        }
+
+        next() {
+            if (this.i === this.names.length - 1) 
+                this.i = 0;
+            else
+                this.i++;
+            return (this.names[this.i]);
+        }
+    };
+
+    static randIt = new Piece.randIter();
 
     constructor (letter) {
 
         this.staticRef = Piece.tetriminoes;
         this.rotLetters = ['A', 'B', 'C', 'D'];
         this.rotKeys = ['up', 'right', 'down', 'left'];
+        this.curRotation = 'up';
 
         if (letter)
-            this.curPiece = letter;
+            this.name = letter;
         else
-            this.curPiece = Piece.randIt.next();
-            // this.curPiece = this.randomPiece();
+            this.name = Piece.randIt.next();
+            // this.name = this.randomPiece();
         this.offsets = this.calcOffsetsFromDrawing();
     }
 
@@ -125,7 +142,7 @@ export class Piece {
         const offsets = 
                     [{y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}];
 
-        const drawing = this.staticRef[this.curPiece].drawing; 
+        const drawing = this.staticRef[this.name].drawing; 
 
         let i = 0;
             for (let y = 0; y < drawing.length; y++) {
