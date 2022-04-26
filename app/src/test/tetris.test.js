@@ -45,7 +45,6 @@ test('pieces exist', () => {
     *   1.check if keys are up down left right 
     *   2.foreach key : check if array of 4 , 
     *                   each array has a y x key , 
-    *                   each y x is greater than -1
     *                   each no array is the same 
     * */
     const nbBlocks = 4;
@@ -60,8 +59,6 @@ test('pieces exist', () => {
             expect(v.length).toStrictEqual(nbBlocks);
             expect(new Set(v).size !== v.length).toStrictEqual(false); //check dups
             v.forEach(_v => expect(Object.keys(_v)).toStrictEqual(['y', 'x']))
-            v.forEach(_v => expect(_v.y).toBeGreaterThan(-1))
-            v.forEach(_v => expect(_v.x).toBeGreaterThan(-1))
         });
     }
 });
@@ -100,15 +97,14 @@ test('place pieces on Board', () => {
     const outOfZonePieceI = {y: new Board().y - 3, x: 0}; //one part should be outside bottom y maxY + 1 x 0
     const outOfZonePieceL = {y: 0, x: 0}; //one part should be outside 2 lefts 
     //const sameZoneAndOutOfZonePieceI = [{y: new Board().y - 2, x: 0}, {y: new Board().y - 3, x: 0}]
-    const sameZonePieceI1 = [{y: 0, x: 0}, {y : 0, x : 0}] //with 2 Is
-    const sameZonePieceI2 = [{y: 0, x: 0}, {y : 3, x : 0}] //with 2 Is
-    const validZonePieceI1 = [{y: 0, x: 0}, {y : 4, x : 4}] //with 2 Is top of eachother
+    const sameZonePieceI1 = [{y: 10, x: 5}, {y : 10, x : 5}] //with 2 Is
+    const validZonePieceI1 = [{y: 10, x: 5}, {y : 10, x : 7}] //with 2 Is top of eachother
 
     let b; //save board 
 
     function ExpectMove(res, boardX, attemptPos, noConditionMovePieceCords) {
         
-        let b = boardX.includes('new') ? new Board(boardX[boardX.length - 1]) : boardX;
+        let b = boardX instanceof Board ? boardX : new Board(boardX[boardX.length - 1]);
         const prevPieceCords = b.getPieceCords();
         const r = b.placeCurPiece(attemptPos);
 
@@ -138,6 +134,7 @@ test('place pieces on Board', () => {
     const offsL = new Piece('L').offsets.up;
 
     //test I and L
+    
     for (const z of [outOfZone1, outOfZone2, outOfZone3, outOfZone4]) {
         for (const [k,v] of Object.entries({'I': offsI, 'L': offsL}))
             ExpectMove(false, `new${k}`, z, expectedCords(z, v));
@@ -148,9 +145,6 @@ test('place pieces on Board', () => {
 
     b = ExpectMove(true, `newI`, sameZonePieceI1[0], expectedCords(sameZonePieceI1[0], offsI));
     ExpectMove(false, b, sameZonePieceI1[1], expectedCords(sameZonePieceI1[1], offsI));
-
-    b = ExpectMove(true, `newI`, sameZonePieceI2[0], expectedCords(sameZonePieceI2[0], offsI));
-    ExpectMove(false, b, sameZonePieceI2[1], expectedCords(sameZonePieceI2[1], offsI));
 
     b = ExpectMove(true, `newI`, validZonePieceI1[0], expectedCords(validZonePieceI1[0], offsI));
     ExpectMove(true, b, validZonePieceI1[1], expectedCords(validZonePieceI1[1], offsI));

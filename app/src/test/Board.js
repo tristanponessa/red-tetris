@@ -1,11 +1,15 @@
 import { Piece } from './Piece';
+import { ArrayIncludesObj } from './utils';
 
 export class Board {
+
+    static y = 20;
+    static x = 10;
 
     constructor(pieceLetter) {
         this.y = 20;
         this.x = 10;
-        this.startPos = {y: 0, x: Math.trunc(this.x / 2)} // in case we wanna change x to ex.11 in the futur, remove fractional part
+        this.startPos = {y: 3, x: Math.trunc(this.x / 2)} // in case we wanna change x to ex.11 in the futur, remove fractional part    we begin at 4 cause some pieces have -Y offsets (biggest being -y2  x-2)
         this.invisibleZoneRangeMaxY = 4; //cause the longest piece I is height 4
         this.curBoard = this.newBoard(); //for drawing to display
         this.occupied = []; //[{name: y: x: } * maxPoss] only existant are present
@@ -103,16 +107,28 @@ export class Board {
         /* uses curPiece object to draw */
         /* checks if can place, if not returns lst of obstacles and does nothing */
         
-        if (this.occupied.includes(testCurPieceCords)) {
+        if (this.pieceInOccupied(testCurPieceCords)) {
             return {state : false, cords : testCurPieceCords};
         } else { 
-            this.occupied.push(testCurPieceCords);
+
+            for (const c of testCurPieceCords) {
+                this.occupied.push({name : this.curPiece.name, cord : c});
+            }
+
             this.playerPos = {...testPlayerPos};
             return {state : true, cords : testCurPieceCords};
         }
     }
 
-    
+    /**
+     * @param {object} offsets [{y: x:} * 4]
+     * @returns {boolean}
+     */
+    pieceInOccupied(offsets) {
+        for (const o of this.occupied)
+            if (ArrayIncludesObj(offsets, o.cord))
+                return true;
+    }
 
     getPieceCords(offsets, pos) {
         

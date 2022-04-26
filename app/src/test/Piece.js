@@ -128,7 +128,7 @@ export class Piece {
         return rkey;
     }
 
-     /* search for cords from drawing of tetriminos*/
+     /* search for cords from drawing of tetriminos, find center of drawing for playerPos to apply offsets from*/
     calcOffsetsFromDrawing() {
         let rots = {};
         for (let i = 0; i < this.rotLetters.length; i++) {
@@ -144,17 +144,25 @@ export class Piece {
 
         const drawing = this.staticRef[this.name].drawing; 
 
+        const startY = -(Math.trunc(drawing.length / 2)); //center
+        const startX = -(Math.trunc(drawing[0].length / 2)); //center
+        
         let i = 0;
-            for (let y = 0; y < drawing.length; y++) {
-                for (let x = 0; x < drawing[y].length; x++) {
-                    if (drawing[y][x].includes(rotLetter)) {
-                        offsets[i].y = y;
-                        offsets[i].x = x;
-                        i++;
-                        
-                    }
+        let y = startY;
+        let x;
+        
+        for (const row of drawing) {
+            x = startX;
+            for (const box of row) {
+                if (box.includes(rotLetter)) {
+                    offsets[i].y = y;
+                    offsets[i].x = x;
+                    i++;
                 }
+                x++;
             }
+            y++;
+        }
         
         return offsets;
     }
