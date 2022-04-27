@@ -107,6 +107,8 @@ test('place pieces on Board', () => {
         let b = boardX instanceof Board ? boardX : new Board(boardX[boardX.length - 1]);
         const prevPieceCords = b.getPieceCords();
         const r = b.placeCurPiece(attemptPos);
+        if (res === true) //consider it landed 
+            b.addBoard(b.curPiece.letter, noConditionMovePieceCords);
 
         expect(r.state).toStrictEqual(res);
         expect(r.cords).toStrictEqual(noConditionMovePieceCords); //if error dont move  r.cords contains if moved despite error
@@ -148,77 +150,25 @@ test('place pieces on Board', () => {
 
     b = ExpectMove(true, `newI`, validZonePieceI1[0], expectedCords(validZonePieceI1[0], offsI));
     ExpectMove(true, b, validZonePieceI1[1], expectedCords(validZonePieceI1[1], offsI));
-
-    
-
-
-
-
-
-
-
-
-
-
-    /*/
-    for (let b of [bPieceI, bPieceL]) {
-        
-        
-
-        let r1 = b.placeCurPiece(outOfZone1);
-        expect(r1).toStrictEqual(false); expect(b.curPiece.pos).toStrictEqual(null);
-
-        
-
-        let r2 = b.placeCurPiece(outOfZone2);
-        expect(r2).toStrictEqual(false); expect(b.curPiece.pos).toStrictEqual(null);
-        let r3 = b.placeCurPiece(outOfZone3);
-        expect(r3).toStrictEqual(false); expect(b.curPiece.pos).toStrictEqual(null);
-        let r4 = b.placeCurPiece(outOfZone4);
-        expect(r4).toStrictEqual(false); expect(b.curPiece.pos).toStrictEqual(null);
-
-    }
-
-    
-
-    //test piece I
-    r = bPieceI.placeCurPiece(outOfZonePieceI); //error
-    expect(r).toStrictEqual(false);
-    expect(bPieceI.curPiece.pos).toStrictEqual(null);
-
-    //SAME ZONE 
-    bPieceI.curPiece = new Piece('I'); //erase or will overlap
-    expect(bPieceI.curPiece.pos).toStrictEqual(null);
-    r = bPieceI.placeCurPiece(sameZonePieceI1[0]); //valid
-    expect(r).toStrictEqual(true);
-    expect(bPieceI.curPiece.pos).toStrictEqual(sameZonePieceI1[0]);
-    r = bPieceI.placeCurPiece(sameZonePieceI1[1]); //error
-    expect(r).toStrictEqual(false);
-    expect(bPieceI.curPiece.pos).toStrictEqual(sameZonePieceI1[0]); //if error dont move
-
-    bPieceI.curPiece = new Piece('I'); //erase or will overlap
-    expect(bPieceI.curPiece.pos).toStrictEqual(null);
-    r = bPieceI.placeCurPiece(sameZonePieceI2[0]); //valid
-    expect(r).toStrictEqual(true);
-    expect(bPieceI.curPiece.pos).toStrictEqual(sameZonePieceI2[0]);
-    r = bPieceI.placeCurPiece(sameZonePieceI2[1]); //error
-    expect(r).toStrictEqual(false);
-    expect(bPieceI.curPiece.pos).toStrictEqual(sameZonePieceI2[0]); //if error dont move
-
-    bPieceI.curPiece = new Piece('I'); //erase or will overlap
-    expect(bPieceI.curPiece.pos).toStrictEqual(null);
-    r = bPieceI.placeCurPiece(sameZoneAndOutOfZonePieceI); //error
-    expect(r).toStrictEqual(false);
-    expect(bPieceI.curPiece.pos).toStrictEqual(null);
-
-    r = bPieceI.placeCurPiece(validZonePieceI1); //valid
-    expect(r).toStrictEqual(true);
-    expect(bPieceI.curPiece.pos).toStrictEqual(validZonePieceI1);
-
-    //test peice L
-    r = bPieceL.placeCurPiece(outOfZonePieceL);
-    expect(r).toStrictEqual(true);
-    expect(bPieceI.curPiece.pos).toStrictEqual(validZonePieceI1);
-    */
 });
 
+test('pieces rotate', () => { 
+    /* rot only goes right  starts at up than goes forever relooping*/
+    const rotKeys = Piece.tetriminoes.rotKeys;
+
+    const p = new Piece();
+
+    for (const r of [...rotKeys, ...rotKeys, 'up']) {
+        expect(p.curRotation).toStrictEqual(r);
+        p.rotate();
+    }
+
+
+});
+
+
+/*test('pieces land', () => { 
+
+
+
+});*/

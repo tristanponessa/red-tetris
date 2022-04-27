@@ -82,7 +82,7 @@ export class Board {
      * @returns {boolean} res.state  did update board or not
      * @returns {object} res.cords [{y: x: }  * 4] if moved cords
      */
-    placeCurPiece(pos) {
+    placeCurPiece(pos, save) {
         const testPlayerPos = pos;
         const testCurPieceCords = this.getPieceCords(this.curPiece.offsets[this.curPiece.curRotation], testPlayerPos);
 
@@ -109,14 +109,18 @@ export class Board {
         
         if (this.pieceInOccupied(testCurPieceCords)) {
             return {state : false, cords : testCurPieceCords};
-        } else { 
-
-            for (const c of testCurPieceCords) {
-                this.occupied.push({name : this.curPiece.name, cord : c});
-            }
+        } else {
+            //if (LANDED)
+            //   this.addBoard(this.curPiece.name, testCurPieceCords);
 
             this.playerPos = {...testPlayerPos};
             return {state : true, cords : testCurPieceCords};
+        }
+    }
+
+    addBoard(name, pieceCords) {
+        for (const c of pieceCords) {
+            this.occupied.push({name, cord : c});
         }
     }
 

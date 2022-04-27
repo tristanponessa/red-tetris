@@ -8,6 +8,7 @@ export class Piece {
         *   1st rotation being A 2nd being B ....
         */
         names: ['I', 'T', 'S', 'Z', 'J', 'L', 'O'],
+        rotKeys : ['up', 'right', 'down', 'left'],
         indestructible : 'X',
         empty: '-',
         new: '+',
@@ -75,20 +76,6 @@ export class Piece {
         }
     };
 
-    /*static randIter() {
-        
-        let pieceNames = [];
-
-        const it = {
-            next() {
-                if (pieceNames.length === 0) 
-                    pieceNames = shuffle([...Piece.tetriminoes.names]);
-                return (pieceNames.pop());
-           }
-        };
-        return it;
-    }*/
-
     static randIter = class {
 
         constructor() {
@@ -105,14 +92,31 @@ export class Piece {
         }
     };
 
+    static rotIter = class {
+
+        constructor() {
+            this.names = [...Piece.tetriminoes.rotKeys];
+            this.i = 0;
+        }
+
+        next() {
+            if (this.i >= Piece.tetriminoes.rotKeys.length - 1)
+                this.i = 0;
+            else
+                this.i++;
+            return (this.names[this.i]);
+        }
+    };
+
     static randIt = new Piece.randIter();
+    static rotIt = new Piece.rotIter();
 
     constructor (letter) {
 
         this.staticRef = Piece.tetriminoes;
         this.rotLetters = ['A', 'B', 'C', 'D'];
-        this.rotKeys = ['up', 'right', 'down', 'left'];
-        this.curRotation = 'up';
+        this.rotKeys = Piece.tetriminoes.rotKeys;
+        this.curRotation = Piece.tetriminoes.rotKeys[0];
 
         if (letter)
             this.name = letter;
@@ -120,6 +124,10 @@ export class Piece {
             this.name = Piece.randIt.next();
             // this.name = this.randomPiece();
         this.offsets = this.calcOffsetsFromDrawing();
+    }
+
+    rotate() {
+        this.curRotation = Piece.rotIt.next();
     }
 
     randomPiece() {
