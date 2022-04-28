@@ -99,6 +99,7 @@ test('place pieces on Board', () => {
     //const sameZoneAndOutOfZonePieceI = [{y: new Board().y - 2, x: 0}, {y: new Board().y - 3, x: 0}]
     const sameZonePieceI1 = [{y: 10, x: 5}, {y : 10, x : 5}] //with 2 Is
     const validZonePieceI1 = [{y: 10, x: 5}, {y : 10, x : 7}] //with 2 Is top of eachother
+    const validPieceI2 = {y:5, x:5}; //very small gap betwene expected
 
     let b; //save board 
 
@@ -127,11 +128,6 @@ test('place pieces on Board', () => {
         {y: pos.y + offs[3].y, x: pos.x + offs[3].x}]
     }
 
-    //this is internal fn to 
-    /*static Piece.GetCords() { 
-        return this.offsets[this.curRotation] + this.playerPos;
-    }*/
-
     const offsI = new Piece('I').offsets.up;
     const offsL = new Piece('L').offsets.up;
 
@@ -150,6 +146,8 @@ test('place pieces on Board', () => {
 
     b = ExpectMove(true, `newI`, validZonePieceI1[0], expectedCords(validZonePieceI1[0], offsI));
     ExpectMove(true, b, validZonePieceI1[1], expectedCords(validZonePieceI1[1], offsI));
+
+    ExpectMove(true, `newI`, validPieceI2, [{y: 0, x:0},{y: 1, x:0},{y: 2, x:0},{y: 3, x:0},{y:4, x:0}]);
 });
 
 test('pieces rotate', () => { 
@@ -162,12 +160,21 @@ test('pieces rotate', () => {
         expect(p.curRotation).toStrictEqual(r);
         p.rotate();
     }
-
-
 });
 
+/*
+test('pieces land', () => { 
 
-/*test('pieces land', () => { 
+    let r;
+    const b = new Board();
+
+    b.occupied.push({name:'X', y: Board.y - 1, x:0}); //x1 y19 no piece in this col bottom of board
+    b.occupied.push({name:'X', y: Board.y - 2, x:1}); //x2 y18 one above bottom
+
+    const p = new Piece('J');
+    b.curPiece = p;
+    b.placeCurPiece({y:Board.y - 3, x:0})
+
 
 
 

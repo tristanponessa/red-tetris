@@ -146,19 +146,37 @@ export class Piece {
     }
 
     calcOffsetsFromLetter(rotLetter) {
-        
+        /* 
+            calc from center : 
+                adv: when rotating, piece seems to rotate with one center piece still 
+                dis: cant place precisly placing I at y0x0 will have center at y0x0 cause the top to be outside -2
+            from top : 
+                opposite
+        */
         const offsets = 
                     [{y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}];
 
         const drawing = this.staticRef[this.name].drawing; 
 
-        const startY = -(Math.trunc(drawing.length / 2)); //center
-        const startX = -(Math.trunc(drawing[0].length / 2)); //center
-        
+        //const startY = -(Math.trunc(drawing.length / 2)); //center   
+        //const startX = -(Math.trunc(drawing[0].length / 2)); //center
+
+        let startX;
+        let startY;
+
+        //search for head 
+        for (let y = 0; y < drawing.length; y++)
+            for (let x = 0; x < drawing[y].length; x++)
+                if (drawing[y][x] === rotLetter) {
+                    startX = -y;
+                    startY = -x;
+                    break;
+                }
+
         let i = 0;
         let y = startY;
         let x;
-        
+
         for (const row of drawing) {
             x = startX;
             for (const box of row) {

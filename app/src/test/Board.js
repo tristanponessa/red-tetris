@@ -82,7 +82,7 @@ export class Board {
      * @returns {boolean} res.state  did update board or not
      * @returns {object} res.cords [{y: x: }  * 4] if moved cords
      */
-    placeCurPiece(pos, save) {
+    placeCurPiece(pos) {
         const testPlayerPos = pos;
         const testCurPieceCords = this.getPieceCords(this.curPiece.offsets[this.curPiece.curRotation], testPlayerPos);
 
