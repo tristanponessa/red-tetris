@@ -20,21 +20,43 @@ test('board filled empty', () => {
             expect(b.curBoard[iy][ix]).toBe(Piece.tetriminoes.empty);
 });
 
-/*
-test('piece I exists', () => {
+
+test('piece I T offsets made for player pointing at top', () => {
+    /* 
+        when you want to place a piece on the board, 
+        we wanna take the top left most part 
+        cords dont have to be in order, just check if present in array
+
+    */
 
     const refI = new Piece('I');
-    
-    const up =    [{y:1, x:0}, {y:1, x:1}, {y:1, x:2}, {y:1, x:3}];
-    const right = [{y:0, x:2}, {y:1, x:2}, {y:2, x:2}, {y:3, x:2}];
-    const down =  [{y:2, x:0}, {y:2, x:1}, {y:2, x:2}, {y:2, x:3}];
-    const left =  [{y:0, x:1}, {y:1, x:1}, {y:2, x:1}, {y:3, x:1}];
+
+    //player arrow poiting at top 
+    const up =    [{y:0, x:0}, {y:1, x:0}, {y:2, x:0}, {y:3, x:0}];
+    const right = [{y:0, x:0}, {y:0, x:1}, {y:0, x:2}, {y:0, x:3}];
+    const down =  [...up];
+    const left =  [...right];
 
     expect(refI.offsets.up).toStrictEqual(up);
     expect(refI.offsets.right).toStrictEqual(right);
     expect(refI.offsets.down).toStrictEqual(down);
     expect(refI.offsets.left).toStrictEqual(left);
-});*/
+
+    //T
+    const refT = new Piece('T');
+
+    //player arrow poiting at top 
+    const upT =  [{y:0, x:0}, {y:1, x:-1}, {y:1, x:0}, {y:1, x:1}];
+    const rightT =  [{y:0, x:0}, {y:1, x:0}, {y:1, x:1}, {y:2, x:0}];
+    const downT =  [{y:0, x:0}, {y:0, x:1}, {y:0, x:2}, {y:1, x:1}];
+    const leftT =  [{y:0, x:0}, {y:1, x:-1}, {y:1, x:0}, {y:2, x:0}];
+
+    expect(refT.offsets.up).toStrictEqual(upT);
+    expect(refT.offsets.right).toStrictEqual(rightT);
+    expect(refT.offsets.down).toStrictEqual(downT);
+    expect(refT.offsets.left).toStrictEqual(leftT);
+
+});
 
 test('pieces exist', () => {
     /*
@@ -99,7 +121,7 @@ test('place pieces on Board', () => {
     //const sameZoneAndOutOfZonePieceI = [{y: new Board().y - 2, x: 0}, {y: new Board().y - 3, x: 0}]
     const sameZonePieceI1 = [{y: 10, x: 5}, {y : 10, x : 5}] //with 2 Is
     const validZonePieceI1 = [{y: 10, x: 5}, {y : 10, x : 7}] //with 2 Is top of eachother
-    const validPieceI2 = {y:5, x:5}; //very small gap betwene expected
+    const validPieceI2 = {y:0, x:0}; //very small gap betwene expected
 
     let b; //save board 
 

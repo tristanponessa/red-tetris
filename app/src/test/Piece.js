@@ -21,12 +21,12 @@ export class Piece {
                 ['-', 'A', 'C', '-']
             ],
         },
-         /*    =    */
+         /*   =    */
         /*   ===     */
         T : {
             drawing : [
-                ['-', 'ABC ', '-'],
-                ['ABD', 'ABCD ', 'ACD'],
+                ['-', 'ABD ', '-'],
+                ['ADC', 'ABCD ', 'ACB'],
                 ['-', 'BCD', '-'],
             ]
         },
@@ -152,6 +152,7 @@ export class Piece {
                 dis: cant place precisly placing I at y0x0 will have center at y0x0 cause the top to be outside -2
             from top : 
                 opposite
+                each cor in each rot must start with y x 0 0
         */
         const offsets = 
                     [{y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}, {y:-1, x:-1}];
@@ -161,33 +162,36 @@ export class Piece {
         //const startY = -(Math.trunc(drawing.length / 2)); //center   
         //const startX = -(Math.trunc(drawing[0].length / 2)); //center
 
-        let startX;
+        /*let startX;
         let startY;
 
         //search for head 
-        for (let y = 0; y < drawing.length; y++)
+        
             for (let x = 0; x < drawing[y].length; x++)
-                if (drawing[y][x] === rotLetter) {
-                    startX = -y;
-                    startY = -x;
+                if (drawing[y][x].includes(rotLetter)) {
+                    startX = -x;
+                    startY = -y;
                     break;
                 }
 
         let i = 0;
         let y = startY;
-        let x;
+        let x;*/
 
-        for (const row of drawing) {
-            x = startX;
-            for (const box of row) {
-                if (box.includes(rotLetter)) {
-                    offsets[i].y = y;
-                    offsets[i].x = x;
+        let top = {y: null , x: null};
+        let i = 0;
+        for (let y = 0; y < drawing.length; y++) {
+            for (let x = 0; x < drawing[y].length; x++) {
+                if (drawing[y][x].includes(rotLetter)) {
+                    if (top.y === null) {
+                        top.y = -y;
+                        top.x = -x;
+                    }
+                    offsets[i].y = y + top.y;
+                    offsets[i].x = x + top.x;
                     i++;
                 }
-                x++;
             }
-            y++;
         }
         
         return offsets;
