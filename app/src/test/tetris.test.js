@@ -68,6 +68,9 @@ test('pieces exist', () => {
     *   2.foreach key : check if array of 4 , 
     *                   each array has a y x key , 
     *                   each no array is the same 
+    *   
+    *   this test is quiet useless due to the one above that checks statics for a couple of pieces 
+    *   but this one tests if all pieces are generally formated 
     * */
     const nbBlocks = 4;
     let p;
@@ -169,7 +172,7 @@ test('place pieces on Board', () => {
     b = ExpectMove(true, `newI`, validZonePieceI1[0], expectedCords(validZonePieceI1[0], offsI));
     ExpectMove(true, b, validZonePieceI1[1], expectedCords(validZonePieceI1[1], offsI));
 
-    ExpectMove(true, `newI`, validPieceI2, [{y: 0, x:0},{y: 1, x:0},{y: 2, x:0},{y: 3, x:0},{y:4, x:0}]);
+    ExpectMove(true, `newI`, validPieceI2, [{y: 0, x:0},{y: 1, x:0},{y: 2, x:0},{y: 3, x:0}]);
 });
 
 test('pieces rotate', () => { 
