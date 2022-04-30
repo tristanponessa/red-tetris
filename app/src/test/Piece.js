@@ -1,5 +1,3 @@
-import { shuffle } from "./utils";
-
 export class Piece {
 
     static tetriminoes = {

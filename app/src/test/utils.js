@@ -37,6 +37,7 @@ export function ArrayIncludesObj(arr, val) {
     /* obj === == .includes() obj will result in false as long as their refs are diff */
     /* a = [{name:''}] a[0] === {name:''} FALSE*/
     /* this fn is too only check vals */
+    /* !! will not work for nested {  { } }  */
     for (const e of arr) {
         if (cmpObjEntries(e, val))
             return true;

@@ -1,5 +1,6 @@
 import { Board } from './Board';
 import { Piece } from './Piece';
+import { ArrayIncludesObj } from './utils';
 
 test('board must be y20 x10', () => {
     const b = new Board();
@@ -187,20 +188,105 @@ test('pieces rotate', () => {
     }
 });
 
-/*
-test('pieces land', () => { 
+test('piece movement / game simulation 1', () => {
+    //speed is determined by js speed, not seconds
+    //playing the game at different diffulties may change the res
+    //the test is in a strict first step second step move down wait for the action ot be done, than move down again
+    //compared to no mattter what in n sec pull down , or you being able to move 2 times left before pull down
 
     let r;
+
+    function checkReturn(movRes, toBe, cords, curPlayerPos) {
+        expect(movRes.state).toStrictEqual(toBe);
+        expect(movRes.cords).toStrictEqual(cords);
+        expect(curPlayerPos).toStrictEqual(toBe === true ? cords[0] : curPlayerPos);
+    }
+
+    const moves = [
+        //moved down
+        {direction: 'right' , res:true, cords: [{y: 1, x:1},{y: 2, x:1},{y: 3, x:1},{y: 4, x:1}]},
+        //moved down
+        {direction: 'left' , res:true,cords: [{y: 2, x:0},{y: 3, x:0},{y: 4, x:0},{y: 5, x:0}]},
+        //moved down
+        {direction: 'left' , res:false,cords: [{y: 3, x:-1},{y: 4, x:-1},{y: 5, x:-1},{y: 6, x:-1}]} //fail hit wall*/
+    ];
+
+    const pullDownsExp = [
+        {res:true, cords:[{y: 1, x:0},{y: 2, x:0},{y: 3, x:0},{y: 4, x:0}]},
+        //moved right
+        {res:true, cords:[{y: 2, x:1},{y: 3, x:1},{y: 4, x:1},{y: 5, x:1}]},
+        //moved left
+        {res:true, cords:[{y: 3, x:0},{y: 4, x:0},{y: 5, x:0},{y: 6, x:0}]},
+    ]
+
+    const b = new Board('I');
+    
+    //simulate real game
+    
+    r = b.placeCurPiece({y:0,x:0});
+    checkReturn(r, true, [{y: 0, x:0},{y: 1, x:0},{y: 2, x:0},{y: 3, x:0}], b.playerPos);
+
+    for (let turn = 0; turn < moves.length; turn++) {
+        //auto
+        r = b.placeCurPiece('down');
+        checkReturn(r, pullDownsExp[turn].res, pullDownsExp[turn].cords, b.playerPos)
+
+        r = b.placeCurPiece(moves[turn].direction);
+        checkReturn(r, moves[turn].res, moves[turn].cords, b.playerPos)
+    }
+
+    //const bottomOfBoard = Board.y - 1;
+
+
+});
+
+
+test('pieces land', () => { 
+
+    /*
+                0 1
+              :   X
+      bottom  -----------------
+
+    */
+
+    let r;
+    const bottomOfBoard = Board.y - 1;
+    const theWhole = {y: bottomOfBoard, x:0};
+    const theStep = {y: bottomOfBoard - 1, x:1};
+    const startPos = {y:bottomOfBoard - 3, x:0};
     const b = new Board();
 
-    b.occupied.push({name:'X', y: Board.y - 1, x:0}); //x1 y19 no piece in this col bottom of board
-    b.occupied.push({name:'X', y: Board.y - 2, x:1}); //x2 y18 one above bottom
+    b.addBoard('X', [{...theStep}]); //x2 y18 one above bottom: ;
 
     const p = new Piece('J');
     b.curPiece = p;
-    b.placeCurPiece({y:Board.y - 3, x:0})
+    
+    //direct landing
+    expect(b.lives).toBe(2);
 
+    r = b.placeCurPiece(startPos);
+    expect(r.state).toStrictEqual(true);
 
+    r = b.placeCurPiece('down');
+    expect(r.state).toStrictEqual(false);
+    expect(ArrayIncludesObj(r.cords,theStep)).toStrictEqual(true); //jest contains dontwork for objects as it checks refs with ===
+    expect(b.lives).toBe(1);
 
+    r = b.placeCurPiece('down');
+    expect(r.state).toStrictEqual(false);
+    //went to 0 back to 2 new piece
+    expect(b.lives).toBe(2);
+    expect(b.curPiece.name).not.toBe('J'); //can only repeat if respawed 7 pieces and J happened to be last lst and the 8th new lst a j too
+    expect(ArrayIncludesObj(r.cords, theStep)).toStrictEqual(true);
+    expect(b.occupiedContains('J', {y: bottomOfBoard - 3, x:0})).toStrictEqual(true); //top should be here
+    
 
-});*/
+    //land than move than land
+
+    /*r = b.placeCurPiece(startPos);
+    expect(r.state).toStrictEqual(true);
+
+    r = b.placeCurPiece('down');
+    expect(r.state).toStrictEqual(true);*/
+});

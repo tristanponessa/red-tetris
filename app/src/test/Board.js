@@ -1,5 +1,5 @@
 import { Piece } from './Piece';
-import { ArrayIncludesObj } from './utils';
+import { ArrayIncludesObj, cmpObjEntries } from './utils';
 
 export class Board {
 
@@ -15,6 +15,7 @@ export class Board {
         this.occupied = []; //[{name: y: x: } * maxPoss] only existant are present
         this.curPiece = new Piece(pieceLetter === undefined ? null : pieceLetter);
         this.playerPos = {...this.startPos};
+        this.lives = 2;
     }
 
     newBoard() {
@@ -54,26 +55,6 @@ export class Board {
             }
     }*/
 
-    /*placeCurPiece(pos) {
-
-        let r = {state: true, cords: null};
-        const testBoard = [...this.board];
-        //save all
-        const prevPlayerPos = this.playerPos;
-        const prevPieceCords = this.curPiece.cords;
-        //attempt   proform calculations ot see if any weird stuff
-        this.playerPos = pos;
-        const newPieceCords = this.getPieceCords()
-
-        //check if outside   just check if in board range
-        if (every(newPieceCords.map(c => c.y > -1 && c.y < this.y 
-                                            && c.x > -1 && c.x < this.x)))
-        //check if overlaped with another piece
-        //draw on board string[][] for curboard state
-        
-
-    }*/
-
     /**
      * @param {object} pos 
      * @param {number} pos.y
@@ -83,6 +64,20 @@ export class Board {
      * @returns {object} res.cords [{y: x: }  * 4] if moved cords
      */
     placeCurPiece(pos) {
+
+        const down = pos === 'down';
+
+        if (pos === 'down') {
+            pos = {y:this.playerPos.y + 1, x:this.playerPos.x};
+        }
+        if (pos === 'right') {
+            pos = {y:this.playerPos.y, x:this.playerPos.x + 1};
+        }
+        if (pos === 'left') {
+            pos = {y:this.playerPos.y, x:this.playerPos.x - 1};
+        }
+
+        const curPieceCords = this.getPieceCords();
         const testPlayerPos = pos;
         const testCurPieceCords = this.getPieceCords(this.curPiece.offsets[this.curPiece.curRotation], testPlayerPos);
 
@@ -91,33 +86,37 @@ export class Board {
                                         && c.x > -1 && c.x < this.x))
             return {state: false, cords: testCurPieceCords};
 
-        /*
-        if (direction === 'up') {
-            attemptRotation = Piece.nextRotation(this.curRotation);
-            //doesn't move
-        }
-        else if (direction === 'down')
-            attemptMove.y += 1;
-        else if (direction === 'left')
-            attemptMove.x -= 1;
-        else if (direction === 'right')
-            attemptMove.x += 1;
-        */
-        
         /* uses curPiece object to draw */
         /* checks if can place, if not returns lst of obstacles and does nothing */
         
         if (this.pieceInOccupied(testCurPieceCords)) {
+            if (down) {
+                this.lives--;
+                if (this.lives === 0) {
+                    this.addBoard(this.curPiece.name, curPieceCords);
+                    this.spawnNewPiece();
+                }
+            }
             return {state : false, cords : testCurPieceCords};
         } else {
             //if (LANDED)
             //   this.addBoard(this.curPiece.name, testCurPieceCords);
-
+            this.lives = 2;
             this.playerPos = {...testPlayerPos};
             return {state : true, cords : testCurPieceCords};
         }
     }
 
+    spawnNewPiece() {
+        this.lives = 2;
+        this.curPiece = new Piece();
+        this.playerPos = {...this.startPos};
+    }
+
+    /**
+     * @param {string} name  tetri name L I T Z or X for indestr.....
+     * @param {object[]} pieceCords [{y: x:}, {} ...]
+     */
     addBoard(name, pieceCords) {
         for (const c of pieceCords) {
             this.occupied.push({name, cord : c});
@@ -125,12 +124,22 @@ export class Board {
     }
 
     /**
-     * @param {object} offsets [{y: x:} * 4]
+     * @param {object} offsets [{y: x:} * 4] 
      * @returns {boolean}
      */
     pieceInOccupied(offsets) {
         for (const o of this.occupied)
             if (ArrayIncludesObj(offsets, o.cord))
+                return true;
+    }
+
+    /**
+     * @param {string} letter 
+     * @returns {object} offset {y: x:}
+     */
+    occupiedContains(letter, offset) {
+        for (const o of this.occupied)
+            if (cmpObjEntries(offset, o.cord) && o.name === letter)
                 return true;
     }
 
@@ -167,9 +176,6 @@ export class Board {
         return lowestY;
     }
 
-    /*dropNewPiece(pieceLetter) {
-        this.curPiece = new Piece(pieceLetter === undefined ? undefined : pieceLetter);
-    }*/
 }
 
 
