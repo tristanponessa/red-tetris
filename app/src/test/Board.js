@@ -76,16 +76,14 @@ export class Board {
         if (pos === 'left') {
             pos = {y:this.playerPos.y, x:this.playerPos.x - 1};
         }
+        if (pos === 'rotate') {
+            pos = {y:this.playerPos.y, x:this.playerPos.x}; //dont  move
+            this.curPiece.rotate();
+        }
 
         const curPieceCords = this.getPieceCords();
         const testPlayerPos = pos;
         const testCurPieceCords = this.getPieceCords(this.curPiece.offsets[this.curPiece.curRotation], testPlayerPos);
-
-        //if out of bounds dont try anything
-        /*if (!testCurPieceCords.every(c => c.y > -1 && c.y < this.y 
-                                        && c.x > -1 && c.x < this.x))
-            return {state: false, cords: testCurPieceCords};*/
-        
 
         //only happens if you explicitly place here via code , like for a test
         if (testCurPieceCords.some(c => c.x < 0 || c.x >= this.x))

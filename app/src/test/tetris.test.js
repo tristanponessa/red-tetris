@@ -176,7 +176,7 @@ test('place pieces on Board', () => {
     ExpectMove(true, `newI`, validPieceI2, [{y: 0, x:0},{y: 1, x:0},{y: 2, x:0},{y: 3, x:0}]);
 });
 
-test('pieces rotate', () => { 
+test('pieces rotate outside board', () => { 
     /* rot only goes right  starts at up than goes forever relooping*/
     const rotKeys = Piece.tetriminoes.rotKeys;
 
@@ -241,7 +241,7 @@ test('piece movement / game simulation 1', () => {
 });
 
 
-test('pieces land', () => { 
+test('pieces land / game simulation 2', () => { 
 
     /*
                 0 1
@@ -320,3 +320,52 @@ test('pieces land', () => {
     expect(b.curPiece.name).not.toBe('J'); //can only repeat if respawed 7 pieces and J happened to be last lst and the 8th new lst a j too
 
 });
+
+test('pieces rotation on Baord', () => { 
+    /* the difficulty of this test is 
+        the akward rotation system that is supposed to be diff lines, causint it to jump up one when going back to up rotation
+        but in real game play as tested in diff versions, the tetri roatates around a center piece, causing 2 rotations ot exist hori and vertical
+        im gonna keep this test very simple, were only gonna check if colisions happen
+
+        on top of that my offsets system actually ignore the 4 positions since top piece is always at  0 0, even if 2 sides are ay y 1 and y 2 , theyll bboth end y 0 0 
+
+        roatation is not possible when piece blocking! cause it doesnt teleport to pos, it slides passing by every single box
+
+        were not checking each specific pos cause many tests before prooved it worked
+
+        test : 
+            drop I 
+            rotate 
+            down
+            down : cant piece blocking loose one life 
+            rotate 
+    */
+
+    let r;
+    let b = new Board('I');
+    b.placeCurPiece({y:0, x:0});
+    b.addBoard('X', [{y:0,x:1}]); //
+    b.addBoard('X', [{y:0,x:1}]);
+    //b.addBoard('X', [{}]); /0/
+
+    r = b.placeCurPiece('rotate');
+    expect(r.state).toBe(false); //failed becuase box on it after rot
+    b.placeCurPiece('down');
+    r = b.placeCurPiece('rotate');
+    expect(r.state).toBe(true);
+    expect(r.cords[0]).toStrictEqual(b.playerPos); //top most left must be on player ptr
+
+    /* 
+
+
+
+    */
+
+});
+
+
+//'test receive malus'
+//'test game loose'
+//test game win  all othe rplayer loose
+//'test tetris 1 2 3 4 + give malus'
+// score
