@@ -82,14 +82,22 @@ export class Board {
         const testCurPieceCords = this.getPieceCords(this.curPiece.offsets[this.curPiece.curRotation], testPlayerPos);
 
         //if out of bounds dont try anything
-        if (!testCurPieceCords.every(c => c.y > -1 && c.y < this.y 
+        /*if (!testCurPieceCords.every(c => c.y > -1 && c.y < this.y 
                                         && c.x > -1 && c.x < this.x))
+            return {state: false, cords: testCurPieceCords};*/
+        
+
+        //only happens if you explicitly place here via code , like for a test
+        if (testCurPieceCords.some(c => c.x < 0 || c.x >= this.x))
+            return {state: false, cords: testCurPieceCords};
+        //if occurs you loose game
+        if (testCurPieceCords.some(c => c.y < 0))
             return {state: false, cords: testCurPieceCords};
 
         /* uses curPiece object to draw */
         /* checks if can place, if not returns lst of obstacles and does nothing */
-        
-        if (this.pieceInOccupied(testCurPieceCords)) {
+        /* if occurs, landed , checks if exisitng piece or beyond floor */
+        if (this.pieceInOccupied(testCurPieceCords) || testCurPieceCords.some(c => c.y >= this.y)) {
             if (down) {
                 this.lives--;
                 if (this.lives === 0) {

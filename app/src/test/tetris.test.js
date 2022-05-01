@@ -255,7 +255,7 @@ test('pieces land', () => {
     const theWhole = {y: bottomOfBoard, x:0};
     const theStep = {y: bottomOfBoard - 1, x:1};
     const startPos = {y:bottomOfBoard - 3, x:0};
-    const b = new Board();
+    let b = new Board();
 
     b.addBoard('X', [{...theStep}]); //x2 y18 one above bottom: ;
 
@@ -283,10 +283,40 @@ test('pieces land', () => {
     
 
     //land than move than land
+    b = new Board('J');
+    b.addBoard('X', [{...theStep}]); //x2 y18 one above bottom: ;
 
-    /*r = b.placeCurPiece(startPos);
+    r = b.placeCurPiece(startPos);
     expect(r.state).toStrictEqual(true);
 
     r = b.placeCurPiece('down');
-    expect(r.state).toStrictEqual(true);*/
+    expect(r.state).toStrictEqual(false);
+    expect(ArrayIncludesObj(r.cords,theStep)).toStrictEqual(true); //jest contains dontwork for objects as it checks refs with ===
+    expect(b.lives).toBe(1);
+
+    r = b.placeCurPiece('right');
+    expect(r.state).toStrictEqual(true);
+    expect(b.lives).toBe(2);
+
+    r = b.placeCurPiece('right');
+    expect(r.state).toStrictEqual(true);
+    expect(b.lives).toBe(2);
+
+    r = b.placeCurPiece('down');
+    expect(r.state).toStrictEqual(true);
+    expect(b.lives).toBe(2);
+
+    r = b.placeCurPiece('down');
+    expect(r.state).toStrictEqual(true);
+    expect(b.lives).toBe(2);
+
+    r = b.placeCurPiece('down');
+    expect(r.state).toStrictEqual(false);
+    expect(b.lives).toBe(1);
+
+    r = b.placeCurPiece('down');
+    expect(r.state).toStrictEqual(false);
+    expect(b.lives).toBe(2);
+    expect(b.curPiece.name).not.toBe('J'); //can only repeat if respawed 7 pieces and J happened to be last lst and the 8th new lst a j too
+
 });
