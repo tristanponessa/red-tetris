@@ -327,11 +327,17 @@ test('pieces rotation on Baord', () => {
         but in real game play as tested in diff versions, the tetri roatates around a center piece, causing 2 rotations ot exist hori and vertical
         im gonna keep this test very simple, were only gonna check if colisions happen
 
+        1st rotation sys: the piece slides , causing it to be on the next line for a split second, if block on next line, it will prevent
+        2nd rotation system : theres also a second rotation system where we can consider rotation is not a slide , but the top block pushes the bottom to the side, causing a rot against a wall possible 
+        3rd sys: teleport , nothing block 
+
         on top of that my offsets system actually ignore the 4 positions since top piece is always at  0 0, even if 2 sides are ay y 1 and y 2 , theyll bboth end y 0 0 
 
-        roatation is not possible when piece blocking! cause it doesnt teleport to pos, it slides passing by every single box
+        WE WILL USE 2ND : on the rotation schemas across intenret, theres no mentioning whats so ever of a slide like in 1st sys
 
         were not checking each specific pos cause many tests before prooved it worked
+
+        the best exmaple being 
 
         test : 
             drop I 
@@ -344,8 +350,8 @@ test('pieces rotation on Baord', () => {
     let r;
     let b = new Board('I');
     b.placeCurPiece({y:0, x:0});
-    b.addBoard('X', [{y:0,x:1}]); //
-    b.addBoard('X', [{y:0,x:1}]);
+    b.addBoard('X', [{y:,x:}]); //
+    //b.addBoard('X', [{y:0,x:1}]);
     //b.addBoard('X', [{}]); /0/
 
     r = b.placeCurPiece('rotate');
