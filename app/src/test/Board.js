@@ -66,6 +66,10 @@ export class Board {
     placeCurPiece(pos) {
 
         const down = pos === 'down';
+        const rot = pos === 'rotate';
+        //save
+        const prevRotation = this.curPiece.curRotation;
+        const curPieceCords = this.getPieceCords();
 
         if (pos === 'down') {
             pos = {y:this.playerPos.y + 1, x:this.playerPos.x};
@@ -81,7 +85,7 @@ export class Board {
             this.curPiece.rotate();
         }
 
-        const curPieceCords = this.getPieceCords();
+        //test
         const testPlayerPos = pos;
         const testCurPieceCords = this.getPieceCords(this.curPiece.offsets[this.curPiece.curRotation], testPlayerPos);
 
@@ -91,7 +95,12 @@ export class Board {
         //if occurs you loose game
         if (testCurPieceCords.some(c => c.y < 0))
             return {state: false, cords: testCurPieceCords};
-
+        //if obst in rotation area 
+        if (rot)
+            if (this.pieceInOccupied(this.getRotationCords(this.curPiece.name, pos))) {
+                this.curPiece.curRotation = prevRotation; //the other resets are to simply return and forget everything but this one explicitly resets due to rotate fn
+                return {state: false, cords: testCurPieceCords, msg: 'rotation error'};
+            }
         /* uses curPiece object to draw */
         /* checks if can place, if not returns lst of obstacles and does nothing */
         /* if occurs, landed , checks if exisitng piece or beyond floor */
@@ -130,10 +139,11 @@ export class Board {
     }
 
     /**
-     * @param {object} offsets [{y: x:} * 4] 
+     * @param {object} offsets [{y: x:} * n] 
      * @returns {boolean}
      */
     pieceInOccupied(offsets) {
+        //if 1 cord is touching , its true
         for (const o of this.occupied)
             if (ArrayIncludesObj(offsets, o.cord))
                 return true;
@@ -142,7 +152,7 @@ export class Board {
     /**
      * @param {string} letter 
      * @returns {object} offset {y: x:}
-     */
+    */
     occupiedContains(letter, offset) {
         for (const o of this.occupied)
             if (cmpObjEntries(offset, o.cord) && o.name === letter)
@@ -166,6 +176,31 @@ export class Board {
                 {y: p1.y + off[3].y, x: p1.x + off[3].x}
             ]
         );
+    }
+
+    /**
+     * @param {string} pieceLetter char  
+     * @param {object} pos {y: x:}
+     * @returns {object[]} [{y: x:} n * n] 
+     */
+    getRotationCords(pieceLetter, pos) {
+        /* 
+            when piece rotates, it does so in an area 
+            which is biggest len of all rots and hight of all rots
+            also in n * n
+            if an obstacle is in that area 
+            it cannot 
+            keep i mind, piece always at y0x0 when placed on board
+            despite drawing being placed in center
+            were calc from piece most top left at 00
+        */
+        const drawing = Piece.tetriminoes[pieceLetter].drawing;
+        const cords = [];
+        const offs = {y: pos.y, x :pos.x};
+        for (let y = 0; y < drawing.length; y++)
+            for (let x = 0; x < drawing[y].length; x++)
+                cords.push({y:offs.y+y, x:offs.x+x});
+        return cords;
     }
 
     /**

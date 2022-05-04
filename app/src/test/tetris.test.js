@@ -321,6 +321,43 @@ test('pieces land / game simulation 2', () => {
 
 });
 
+test('piece rotation area', () => {
+    /* 
+        needed to see if obstacle in way 
+        determined by Piece.drawing len height  n * n
+    */
+    let b = new Board('I');
+    const startPos = {y:0, x:0}; 
+    b.placeCurPiece(startPos);
+    const sizes = { I : {y:4, x:4},
+                  O : {y:2, x:2},
+                  Rest : {y:3, x:3}};
+
+    
+
+    /*function check(size, pieceLetter, startPos) {
+
+    }*/
+    
+    for (const p of Piece.tetriminoes.names) {
+
+        b = new Board(p);
+        b.placeCurPiece(startPos);
+        let rotAreaCords = b.getRotationCords(p, startPos);
+        let size = p === 'I' || p === 'O' ? sizes[p] : sizes.Rest;
+
+        expect(rotAreaCords.length).toBe(size.y * size.x);
+        for (let y = 0; y < size.y; y++)
+                for (let x = 0; x < size.x; x++) {
+                    expect(ArrayIncludesObj(rotAreaCords, {y:y, x:x})).toBe(true);
+                }
+    }
+    //b = new Board('I');
+
+    
+
+});
+
 test('pieces rotation on Baord', () => { 
     /* the difficulty of this test is 
         the akward rotation system that is supposed to be diff lines, causint it to jump up one when going back to up rotation
@@ -334,38 +371,32 @@ test('pieces rotation on Baord', () => {
         on top of that my offsets system actually ignore the 4 positions since top piece is always at  0 0, even if 2 sides are ay y 1 and y 2 , theyll bboth end y 0 0 
 
         WE WILL USE 2ND : on the rotation schemas across intenret, theres no mentioning whats so ever of a slide like in 1st sys
+        starting at most top left of piece, we will define a ROTATION ZONE of its len/height (n * n) thats defined in static drawing of piece in class Piece
 
         were not checking each specific pos cause many tests before prooved it worked
 
         the best exmaple being 
 
         test : 
-            drop I 
-            rotate 
-            down
-            down : cant piece blocking loose one life 
-            rotate 
+ 
     */
 
     let r;
     let b = new Board('I');
     b.placeCurPiece({y:0, x:0});
-    b.addBoard('X', [{y:,x:}]); //
+    
+    b.addBoard('X', [{y:3,x:3}]);
     //b.addBoard('X', [{y:0,x:1}]);
     //b.addBoard('X', [{}]); /0/
 
-    r = b.placeCurPiece('rotate');
-    expect(r.state).toBe(false); //failed becuase box on it after rot
-    b.placeCurPiece('down');
+    r = b.placeCurPiece('rotate'); //always goes right
+    expect(r.state).toBe(false); //failed because box in its rot zone
+    for (let i = 0; i < 4; i++)
+        b.placeCurPiece('down');
     r = b.placeCurPiece('rotate');
     expect(r.state).toBe(true);
     expect(r.cords[0]).toStrictEqual(b.playerPos); //top most left must be on player ptr
 
-    /* 
-
-
-
-    */
 
 });
 
