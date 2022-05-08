@@ -1,14 +1,16 @@
 import { Piece } from './Piece';
-import { ArrayIncludesObj, cmpObjEntries } from './utils';
+import { Game } from './Game';
+import { ArrayIncludesObj, cmpObjEntries, randString } from './utils';
 
 export class Board {
 
     static y = 20;
     static x = 10;
 
-    constructor(pieceLetter) {
+    constructor(pieceLetter, name=randString(10)) {
         this.y = 20;
         this.x = 10;
+        this.name = name;
         this.startPos = {y: 3, x: Math.trunc(this.x / 2)} // in case we wanna change x to ex.11 in the futur, remove fractional part    we begin at 4 cause some pieces have -Y offsets (biggest being -y2  x-2)
         this.invisibleZoneRangeMaxY = 4; //cause the longest piece I is height 4
         this.curBoard = this.newBoard(); //for drawing to display
@@ -56,7 +58,7 @@ export class Board {
     }*/
 
     /**
-     * @param {object} pos 
+     * @param {object | string} pos down right left rotate
      * @param {number} pos.y
      * @param {number} pos.x
      * @returns {object} res
@@ -110,6 +112,7 @@ export class Board {
                 if (this.lives === 0) {
                     this.addBoard(this.curPiece.name, curPieceCords);
                     this.spawnNewPiece();
+                    this.tetrisN();
                 }
             }
             return {state : false, cords : testCurPieceCords};
@@ -120,6 +123,71 @@ export class Board {
             this.playerPos = {...testPlayerPos};
             return {state : true, cords : testCurPieceCords};
         }
+    }
+
+    tetrisN() {
+        /* checks if tetris removes from occupied and ives malus to opponents */
+        let completedRows = this.findCompleteLines();
+        const prevLen =  this.occupied.length;
+        this.occupied = this.occupied.filter(e => completedRows.includes(e.cord.y));
+        this.draw() //not mandatory  just in case you call this.curBoard directly by accident
+        const malusN = prevLen - this.occupied.length;
+        Game.giveMalus(this, malusN);
+    }
+
+    /**
+     * implicit_arg {[{name: string, cord: {y,x} * N]} this.occupied
+     * @returns {string[][]}
+     */
+    draw() {
+        /*
+            started out with simple cords but it became to cumbersome to fetch elems and rows
+            so we beform a drawing everytime and check from that
+        */
+        this.curBoard = this.newBoard();
+        for (const e of this.occupied) {
+            this.curBoard[e.cord.y][e.cord.x] = e.name;
+        }
+        return this.curBoard //just in case
+    }
+
+    /**
+     * 
+     * @param {string[][]} board 
+     */
+    fromDrawToOccupied(board) {
+        /* updates this.occupied which is cord objects */
+        /* only contains piece letters and X indestructible*/
+        this.occupied = [];
+        for (let y; y < Board.y; y++) {
+            for (let x; x < Board.x; x++) {
+                if (board[y][x] === Piece.tetriminoes.indestructible || Piece.tetriminoes.names.includes(board[y][x]))
+                    this.occupied.push({name: board[y][x], cord: {y,x}});
+            }
+        }
+    }
+
+    findCompleteLines() {
+        const l = []; //indexes of this.curBoard
+        for (let y = 0; y < Board.y; y++)
+            if (this.lineComplete(y)) //proforms draw()
+                l.push(y);
+        return l;
+    }
+
+    lineComplete(y) {
+        const board = this.draw();
+        return board[y].every(e => Piece.tetriminoes.names.includes(e))
+    }
+    
+    insertMalus(n) {
+        //when someone tetris, they malus you
+        const board = this.draw();
+        let bottomBoard = this.y - 1;
+        for (let i = 0; i < n; i++, bottomBoard--) {
+            board[bottomBoard] = new Array(this.x).fill(Piece.tetriminoes.indestructible);
+        }
+        this.fromDrawToOccupied(board); //fns using cords objs need the update
     }
 
     spawnNewPiece() {
@@ -143,6 +211,7 @@ export class Board {
      * @returns {boolean}
      */
     pieceInOccupied(offsets) {
+        //name not clear, if one part of piece is touching one part of piece
         //if 1 cord is touching , its true
         for (const o of this.occupied)
             if (ArrayIncludesObj(offsets, o.cord))
@@ -151,12 +220,19 @@ export class Board {
 
     /**
      * @param {string} letter 
-     * @returns {object} offset {y: x:}
+     * @param {object} offset {y: x:} | [{y: x:} * n]
+     * @returns {bool}
     */
-    occupiedContains(letter, offset) {
-        for (const o of this.occupied)
-            if (cmpObjEntries(offset, o.cord) && o.name === letter)
-                return true;
+    occupiedContains(letter, offsets) {
+        if (offsets instanceof Object)
+            offsets = [offsets];
+        let found = 0;
+        for (const off of offsets)
+            for (const o of this.occupied) {
+                if (cmpObjEntries(off, o.cord) && o.name === letter)
+                        found++;
+            }
+        return found === offsets.length;
     }
 
     getPieceCords(offsets, pos) {

@@ -1,5 +1,7 @@
 import { Board } from './Board';
 import { Piece } from './Piece';
+import { Game } from './Game';
+
 import { ArrayIncludesObj } from './utils';
 
 test('board must be y20 x10', () => {
@@ -399,6 +401,64 @@ test('pieces rotation on Baord', () => {
 
 
 });
+
+test('test tetris 4 + give malus' , () => { 
+
+    function nBottomCords(n) {
+        let start = Board.y - 1 - n;
+        let cords = [];
+        for (let y = start; y < Board.y ; y++)
+            for (let x = 0; x < Board.x ; x++)
+                cords.push({y,x});
+        return cords;
+    }
+
+    const myBoard = new Board('I');
+    const opponentBoard = new Board('O');
+    Game.boards = [myBoard, opponentBoard]; //will be used inside myBoard inst
+    const startPos = {y:Board.y - 5, x:0};
+    const tetrisCords = []; //use to check if pieces left the area after tetris and piece that fallen
+
+    const fallenPieceLetter = '+';
+    const fallenPieceStart = {y:Board.y - 9,x:0};
+    const fallenPiececords = [startPos,{y: startPos.y + 1, x:startPos.x},{y: startPos.y + 2, x:startPos.x},{y: startPos.y + 3, x:startPos.x}]
+    const tetrisN = 4;
+
+    opponentBoard.placeCurPiece(startPos); //we want ot obervse his piece get replaced by Piece.blocked 'X"
+
+    myBoard.addBoard(fallenPieceLetter, fallenPiececords); //thuis piece must fall when tetris occurs
+    //Is on bottom to form tetris 4 * 4
+    for (let y = Board.y - 4; y < Board.y; y++)
+        for (let x = 0; x < Board.x - 1; x++) {
+            tetrisCords.push({y,x});
+            myBoard.addBoard('I', [{y,x}]);
+    }
+
+    //last one we must observe while move like in game sim
+
+    myBoard.placeCurPiece({y:Board.y - 5, x:Board.x - 1});
+    myBoard.placeCurPiece('down');
+
+    //check tetris
+    expect(myBoard.curPiece.name).not.toBe('I'); //tetris is a landing so new piece
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!EXPORTING BOARD CAUSES STATIC Y AND X TO BECOME UNDEFINED TO FIND OUT WHY
+
+
+    expect(myBoard.occupiedContains('+', fallenPiececords)).toStrictEqual(true); //only the dropped I on to p of tetris with has letter +
+    expect(myBoard.occupied.length === fallenPiececords.length).toBe(true);
+
+
+    //if yes gives malus to opponent threw  Game.insertMalus
+    //check that 
+    
+    const bottomCords = nBottomCords(tetrisN);
+
+    expect(opponentBoard.occupiedContains('O', startPos)).toStrictEqual(false); //O disapeared 
+    expect(opponentBoard.occupiedContains(Piece.tetriminoes.indestructible, bottomCords)).toStrictEqual(true); 
+    expect(opponentBoard.occupied.length === 40).toBe(true); 
+
+});
+
 
 
 //'test receive malus'
