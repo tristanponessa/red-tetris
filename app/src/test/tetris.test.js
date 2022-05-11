@@ -253,7 +253,7 @@ test('pieces land / game simulation 2', () => {
     */
 
     let r;
-    const bottomOfBoard = Board.y - 1;
+    const bottomOfBoard = new Board().y - 1;
     const theWhole = {y: bottomOfBoard, x:0};
     const theStep = {y: bottomOfBoard - 1, x:1};
     const startPos = {y:bottomOfBoard - 3, x:0};
@@ -402,13 +402,17 @@ test('pieces rotation on Baord', () => {
 
 });
 
+
 test('test tetris 4 + give malus' , () => { 
 
+    const By = new Board().y;
+    const Bx = new Board().x;
+
     function nBottomCords(n) {
-        let start = Board.y - 1 - n;
+        let start = By - 1 - n;
         let cords = [];
-        for (let y = start; y < Board.y ; y++)
-            for (let x = 0; x < Board.x ; x++)
+        for (let y = start; y < By ; y++)
+            for (let x = 0; x < Bx ; x++)
                 cords.push({y,x});
         return cords;
     }
@@ -416,32 +420,31 @@ test('test tetris 4 + give malus' , () => {
     const myBoard = new Board('I');
     const opponentBoard = new Board('O');
     Game.boards = [myBoard, opponentBoard]; //will be used inside myBoard inst
-    const startPos = {y:Board.y - 5, x:0};
+    const startPos = {y:By - 5, x:0};
     const tetrisCords = []; //use to check if pieces left the area after tetris and piece that fallen
 
     const fallenPieceLetter = '+';
-    const fallenPieceStart = {y:Board.y - 9,x:0};
-    const fallenPiececords = [startPos,{y: startPos.y + 1, x:startPos.x},{y: startPos.y + 2, x:startPos.x},{y: startPos.y + 3, x:startPos.x}]
+    const fallenPieceStart = {y:By - 8,x:0};
+    const fallenPiececords = [fallenPieceStart,{y: fallenPieceStart.y + 1, x:fallenPieceStart.x},{y: fallenPieceStart.y + 2, x:fallenPieceStart.x},{y: fallenPieceStart.y + 3, x:fallenPieceStart.x}]
     const tetrisN = 4;
 
     opponentBoard.placeCurPiece(startPos); //we want ot obervse his piece get replaced by Piece.blocked 'X"
 
     myBoard.addBoard(fallenPieceLetter, fallenPiececords); //thuis piece must fall when tetris occurs
     //Is on bottom to form tetris 4 * 4
-    for (let y = Board.y - 4; y < Board.y; y++)
-        for (let x = 0; x < Board.x - 1; x++) {
+    for (let y = By - 4; y < By; y++)
+        for (let x = 0; x < Bx - 1; x++) {
             tetrisCords.push({y,x});
             myBoard.addBoard('I', [{y,x}]);
-    }
+        }
 
     //last one we must observe while move like in game sim
 
-    myBoard.placeCurPiece({y:Board.y - 5, x:Board.x - 1});
+    myBoard.placeCurPiece({y:By - 5, x:Bx - 1});
     myBoard.placeCurPiece('down');
 
     //check tetris
     expect(myBoard.curPiece.name).not.toBe('I'); //tetris is a landing so new piece
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!EXPORTING BOARD CAUSES STATIC Y AND X TO BECOME UNDEFINED TO FIND OUT WHY
 
 
     expect(myBoard.occupiedContains('+', fallenPiececords)).toStrictEqual(true); //only the dropped I on to p of tetris with has letter +

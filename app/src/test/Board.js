@@ -4,7 +4,8 @@ import { ArrayIncludesObj, cmpObjEntries, randString } from './utils';
 
 export class Board {
 
-    static y = 20;
+    //!! becomes undefined after exporting class
+    static y = 20; 
     static x = 10;
 
     constructor(pieceLetter, name=randString(10)) {
