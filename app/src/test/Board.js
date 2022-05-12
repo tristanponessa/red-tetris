@@ -58,6 +58,18 @@ export class Board {
             }
     }*/
 
+    /**
+     * 
+     * @param {integer} n TetrisN
+     */
+    pullAllDown(n) {
+        //do not have 'landed mechanism' launched : no new piece 
+        //dont call this.placeCurPiece
+        //move every single individual cord
+        for (const o of this.occupied)
+            o.cord.y += n;
+    }
+
     slamDrop() {
         /* throw that piece to the ground like its trash */
         let r;
@@ -154,11 +166,11 @@ export class Board {
         let completedRows = this.findCompleteLines();
         if (completedRows.length === 0)
             return;
-        const prevLen =  this.occupied.length;
-        this.occupied = this.occupied.filter(e => completedRows.includes(e.cord.y));
+        this.occupied = this.occupied.filter(e => !completedRows.includes(e.cord.y));
+        const tetrisN = completedRows.length;
+        this.pullAllDown(tetrisN);
         this.draw() //not mandatory  just in case you call this.curBoard directly by accident
-        const malusN = prevLen - this.occupied.length;
-        Game.giveMalus(this, malusN);
+        //Game.giveMalus(this, this.completedRows.length);
     }
 
     /**
@@ -250,7 +262,7 @@ export class Board {
      * @returns {bool}
     */
     occupiedContains(letter, offsets) {
-        if (offsets instanceof Object)
+        if (!Array.isArray(offsets))
             offsets = [offsets];
         let found = 0;
         for (const off of offsets)
