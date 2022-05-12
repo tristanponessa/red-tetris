@@ -58,6 +58,19 @@ export class Board {
             }
     }*/
 
+    slamDrop() {
+        /* throw that piece to the ground like its trash */
+        let r;
+        let i = 0;
+        do {
+            r = this.placeCurPiece('down');
+            i++;
+            if (i > this.y + 10)
+                return {msg: 'went beyond board'};
+        } while (r.msg !== 'landed')
+        return r;
+    }
+
     /**
      * @param {object | string} pos down right left rotate
      * @param {number} pos.y
@@ -65,8 +78,16 @@ export class Board {
      * @returns {object} res
      * @returns {boolean} res.state  did update board or not
      * @returns {object} res.cords [{y: x: }  * 4] if moved cords
+     * @returns {string} OPTIONAL res.msg landed rotationError ....
      */
     placeCurPiece(pos) {
+        /*
+        *  does indirect placement
+        *  virtually moves, if valid, returns true with new cords BUT does not save in history or anywhere
+        *  EXCEPT player pos
+        *  only when lands (fails twice going down) it is saved
+        *  if you wanna place directly in history with no condition, use this.addBoard but playerPos wont be saved
+        */
 
         const down = pos === 'down';
         const rot = pos === 'rotate';
@@ -108,15 +129,17 @@ export class Board {
         /* checks if can place, if not returns lst of obstacles and does nothing */
         /* if occurs, landed , checks if exisitng piece or beyond floor */
         if (this.pieceInOccupied(testCurPieceCords) || testCurPieceCords.some(c => c.y >= this.y)) {
+            let msg = '';
             if (down) {
                 this.lives--;
                 if (this.lives === 0) {
                     this.addBoard(this.curPiece.name, curPieceCords);
                     this.spawnNewPiece();
                     this.tetrisN();
+                    msg = 'landed';
                 }
             }
-            return {state : false, cords : testCurPieceCords};
+            return {state : false, cords : testCurPieceCords, msg: msg};
         } else {
             //if (LANDED)
             //   this.addBoard(this.curPiece.name, testCurPieceCords);
@@ -129,6 +152,8 @@ export class Board {
     tetrisN() {
         /* checks if tetris removes from occupied and ives malus to opponents */
         let completedRows = this.findCompleteLines();
+        if (completedRows.length === 0)
+            return;
         const prevLen =  this.occupied.length;
         this.occupied = this.occupied.filter(e => completedRows.includes(e.cord.y));
         this.draw() //not mandatory  just in case you call this.curBoard directly by accident
@@ -170,7 +195,7 @@ export class Board {
 
     findCompleteLines() {
         const l = []; //indexes of this.curBoard
-        for (let y = 0; y < Board.y; y++)
+        for (let y = 0; y < this.y; y++)
             if (this.lineComplete(y)) //proforms draw()
                 l.push(y);
         return l;
