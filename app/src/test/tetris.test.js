@@ -279,7 +279,7 @@ test('pieces land / game simulation 2', () => {
     expect(r.state).toStrictEqual(false);
     //went to 0 back to 2 new piece
     expect(b.lives).toBe(2);
-    expect(b.curPiece.name).not.toBe('J'); //can only repeat if respawed 7 pieces and J happened to be last lst and the 8th new lst a j too
+    expect(r.msg).toStrictEqual('landed');
     expect(ArrayIncludesObj(r.cords, theStep)).toStrictEqual(true);
     expect(b.occupiedContains('J', startPos)).toStrictEqual(true); //couldnt move so , should be here
     
@@ -319,7 +319,7 @@ test('pieces land / game simulation 2', () => {
     r = b.placeCurPiece('down');
     expect(r.state).toStrictEqual(false);
     expect(b.lives).toBe(2);
-    expect(b.curPiece.name).not.toBe('J'); //can only repeat if respawed 7 pieces and J happened to be last lst and the 8th new lst a j too
+    expect(r.msg).toStrictEqual('landed');
 
 });
 
