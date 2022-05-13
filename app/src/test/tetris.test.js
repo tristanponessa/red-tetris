@@ -419,7 +419,7 @@ test('test tetris 4 + give malus' , () => {
 
     const myBoard = new Board('I');
     const opponentBoard = new Board('I');
-    Game.boards = [myBoard, opponentBoard]; //will be used inside myBoard inst
+    Game.boards = [myBoard, opponentBoard]; //will be used inside myBoard inst  !!might mess up futur test cause of Game global  if jest dont isolate
     const startPos = {y:By - 5, x:0};
     const tetrisCords = []; //use to check if pieces left the area after tetris and piece that fallen
 
@@ -434,8 +434,11 @@ test('test tetris 4 + give malus' , () => {
         for (let x = 0; x < Bx - 1; x++) {
             tetrisCords.push({y,x});
             myBoard.addBoard('I', [{y,x}]);
-            opponentBoard.addBoard('I', [{y,x}]); //we want ot obervse his piece get replaced by Piece.blocked 'X"
+            opponentBoard.addBoard('!', [{y,x}]); //we want ot obervse his piece get replaced by Piece.blocked 'X"
         }
+
+        const nBoard = opponentBoard.draw();
+        expect(nBoard[By - 4][0]).toStrictEqual('!');
 
     //last one we must observe while move like in game sim
     let r;
@@ -453,19 +456,20 @@ test('test tetris 4 + give malus' , () => {
 
     //if yes gives malus to opponent threw  Game.insertMalus
     //check that 
-    /*
-    const bottomCords = nBottomCords(tetrisN);
 
-    expect(opponentBoard.occupiedContains('O', startPos)).toStrictEqual(false); //O disapeared 
-    expect(opponentBoard.occupiedContains(Piece.tetriminoes.indestructible, bottomCords)).toStrictEqual(true); 
+    //expect(opponentBoard.occupiedContains('!', {y:By - 4, x:0})).toStrictEqual(false); //O disapeared 
+    const nowBoard = opponentBoard.draw();
+    for (let y = By - 4; y < By; y++)
+        for (let x = 0; x < Bx; x++) {
+            expect(nowBoard[y][x]).toStrictEqual(Piece.tetriminoes.indestructible); 
+        }
     expect(opponentBoard.occupied.length === 40).toBe(true); 
-    */
+
+    
 });
 
 
 
-//'test receive malus'
 //'test game loose'
 //test game win  all othe rplayer loose
-//'test tetris 1 2 3 4 + give malus'
 // score

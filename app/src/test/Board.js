@@ -170,7 +170,7 @@ export class Board {
         const tetrisN = completedRows.length;
         this.pullAllDown(tetrisN);
         this.draw() //not mandatory  just in case you call this.curBoard directly by accident
-        //Game.giveMalus(this, this.completedRows.length);
+        Game.giveMalus(this, tetrisN);
     }
 
     /**
@@ -197,10 +197,11 @@ export class Board {
         /* updates this.occupied which is cord objects */
         /* only contains piece letters and X indestructible*/
         this.occupied = [];
-        for (let y; y < Board.y; y++) {
-            for (let x; x < Board.x; x++) {
-                if (board[y][x] === Piece.tetriminoes.indestructible || Piece.tetriminoes.names.includes(board[y][x]))
+        for (let y = 0; y < Board.y; y++) {
+            for (let x = 0; x < Board.x; x++) {
+                if (board[y][x] !== Piece.tetriminoes.empty)
                     this.occupied.push({name: board[y][x], cord: {y,x}});
+                //if (board[y][x] === Piece.tetriminoes.indestructible || Piece.tetriminoes.names.includes(board[y][x]))
             }
         }
     }
