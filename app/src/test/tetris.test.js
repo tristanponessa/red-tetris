@@ -468,7 +468,28 @@ test('test tetris 4 + give malus' , () => {
     
 });
 
+test('win / loose game', () => {
 
+    const gameManager = new Game(['trisRetroWave', 'Jesus&Santa', 'BijoDBZ']);
+
+    //fill opp board 
+    //add one piece on top 
+    for (let y = 0; y < gameManager.boards[0].y; y++)
+        for (let x = 0; x < gameManager.boards[0].x; x++) {
+            gameManager.boards[1].addBoard('X', [{y,x}]);
+            gameManager.boards[2].addBoard('X', [{y,x}]);
+        }
+    
+    gameManager.boards[1].placeCurPiece('down'); //no need of landed mechanism
+    gameManager.boards[2].placeCurPiece('down');
+    expect(gameManager.boards[1].loose).toBe(true);
+    expect(gameManager.boards[2].loose).toBe(true);
+    expect(gameManager.boards[0].loose).toBe(false);
+    
+    const winner = gameManager.getWinner();
+    expect(winner.name).toBe('trisRetroWave');
+
+});
 
 //'test game loose'
 //test game win  all othe rplayer loose

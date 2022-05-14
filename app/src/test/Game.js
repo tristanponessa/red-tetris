@@ -8,9 +8,18 @@ export class Game {
      * @param {string[]} names 
      */
     constructor(names) {
-        this.boards = {};
-        names.forEach(n => this.boards[n] = new Board());
+        this.boards = [];
+        names.forEach(n => this.boards.push(new Board(undefined, n)));
     }
+
+    /**
+     * @returns {Baord | bool} name board winner OR false
+     */
+    getWinner() {
+        const b = this.boards.filter(b => !b.loose);
+        return b.length === 1 ? b[0] : false;
+    }
+
 
     /**
      * @param {Board} boardExluded well use .name

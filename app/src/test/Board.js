@@ -19,6 +19,7 @@ export class Board {
         this.curPiece = new Piece(pieceLetter === undefined ? null : pieceLetter);
         this.playerPos = {...this.startPos};
         this.lives = 2;
+        this.loose = false;
     }
 
     newBoard() {
@@ -126,11 +127,10 @@ export class Board {
         const testCurPieceCords = this.getPieceCords(this.curPiece.offsets[this.curPiece.curRotation], testPlayerPos);
 
         //only happens if you explicitly place here via code , like for a test
-        if (testCurPieceCords.some(c => c.x < 0 || c.x >= this.x))
+        if (testCurPieceCords.some(c => c.x < 0 || c.x >= this.x || c.y < 0))
             return {state: false, cords: testCurPieceCords};
         //if occurs you loose game
-        if (testCurPieceCords.some(c => c.y < 0))
-            return {state: false, cords: testCurPieceCords};
+        
         //if obst in rotation area 
         if (rot)
             if (this.pieceInOccupied(this.getRotationCords(this.curPiece.name, pos))) {
@@ -142,6 +142,10 @@ export class Board {
         /* if occurs, landed , checks if exisitng piece or beyond floor */
         if (this.pieceInOccupied(testCurPieceCords) || testCurPieceCords.some(c => c.y >= this.y)) {
             let msg = '';
+            if (this.playerPos.y === this.startPos.y && this.playerPos.x === this.startPos.x) {
+                this.loose = true;
+                return {state: false, cords: testCurPieceCords, msg: 'lost game'};
+            }
             if (down) {
                 this.lives--;
                 if (this.lives === 0) {
@@ -305,7 +309,7 @@ export class Board {
             also in n * n
             if an obstacle is in that area 
             it cannot 
-            keep i mind, piece always at y0x0 when placed on board
+            keep in mind, piece always at y0x0 when placed on board
             despite drawing being placed in center
             were calc from piece most top left at 00
         */
