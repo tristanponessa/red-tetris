@@ -19,6 +19,8 @@ export class Board {
         this.curPiece = new Piece(pieceLetter === undefined ? null : pieceLetter);
         this.playerPos = {...this.startPos};
         this.lives = 2;
+        this.score_ = 0;
+        this.scoreTable = {'tetris':13_746, 'move': 12, 'rotation': 17};
         this.loose = false;
     }
 
@@ -161,6 +163,7 @@ export class Board {
             //   this.addBoard(this.curPiece.name, testCurPieceCords);
             this.lives = 2;
             this.playerPos = {...testPlayerPos};
+            this.score(rot ? 'rotation' : 'move')
             return {state : true, cords : testCurPieceCords};
         }
     }
@@ -175,6 +178,7 @@ export class Board {
         this.pullAllDown(tetrisN);
         this.draw() //not mandatory  just in case you call this.curBoard directly by accident
         Game.giveMalus(this, tetrisN);
+        this.score(tetrisN);
     }
 
     /**
@@ -336,6 +340,16 @@ export class Board {
         return lowestY;
     }
 
+    /**
+     * @param {number | string} x number for tetrisN or type of move
+     */
+    score(x) {
+        let n;
+        if (typeof x === 'number') { n = x * this.scoreTable.tetris}
+        if (x === 'move') {n = this.scoreTable.move}
+        if (x === 'rotation') {n = this.scoreTable.rotation}
+        this.score_ += n;
+    }
 }
 
 

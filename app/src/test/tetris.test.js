@@ -491,6 +491,37 @@ test('win / loose game', () => {
 
 });
 
-//'test game loose'
-//test game win  all othe rplayer loose
-// score
+
+test('score', () => {
+
+    const b = new Board();
+
+    const moves = b.scoreTable.move * 6;
+    const rots = b.scoreTable.rotation * 5;
+    const tetrisS = b.scoreTable.tetris * 8;
+    const finalScore = tetrisS + moves + rots;
+
+    for (let i = 0; i < 6; i++)
+        b.placeCurPiece('down');
+    for (let i = 0; i < 5; i++)
+        b.placeCurPiece('rotate');
+    
+    b.curBoard = b.newBoard();
+    b.occupied = [];
+    
+    
+    for (let i = 0; i < 8; i++) {
+        
+        for (let y = b.y - 1; y < b.y; y++)
+            for (let x = 0; x < b.x; x++) {
+                b.addBoard('I', [{y,x}]); //dont launch score or tetris
+        }
+
+        b.tetrisN();
+    }
+
+
+    expect(b.score_).toBe(finalScore);
+
+
+});
