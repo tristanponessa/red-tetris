@@ -96,7 +96,15 @@ BONUS:
         scores
         game modes 
      
-        
+    MINE:
+        use functional programming instead of OOP in tetris game code
+        make desktop version (electron)
+        make app version (android React-Native)
+        front in typescript (React + redux)
+        redo in webAssembly & Rust in Front 
+        back in Rust
+        use rust Rocket API (if necessary)
+        use graphQL instead of SPA 
 
     
 
