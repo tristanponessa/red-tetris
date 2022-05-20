@@ -15,7 +15,7 @@ GENERAL:
 BOILERPLATE
     42 provides a head start scripts
         to start the server 
-        generate navigaotr needed js files 
+        generate navigator needed js files 
         unit tests 
 
 TESTS 
@@ -56,11 +56,11 @@ FRONTEND
 
 
 BACKEND 
-    client is navigator 
-    http communication
-    server must be coded with nodeJS
-    client/server communicate threw `socket.io` [event oriented/bidirectional]
-    persistance system not needed : saving states to files to avoid loosing proformance
+    client is navigator (user uses browser)
+    http communication (SPA)
+    server must be coded with nodeJS (back must use a js engine)
+    client/server communicate threw `socket.io` [event oriented/bidirectional] (back/front)
+    persistance system not needed : saving states to files to avoid loosing proformance ()
     
     SERVER 
         jobs
@@ -87,7 +87,7 @@ BACKEND
         -the navigator must receive index.html with <script ref="bundle.js"> which contains client code 
         -when no more client/server HTML exchanges, it is on its own to render the front and app logic  
             data must still be exchanged between client/server 
-        [[I WONT BE USING : (all allowed)lodash/ramda immutable.js redux-thunk redux-promise]]
+        [[(all allowed)lodash/ramda immutable.js redux-thunk redux-promise]]
 
 
 BONUS:
@@ -96,7 +96,13 @@ BONUS:
         scores
         game modes 
      
-        
+    MINE:
+        make an android app (react native) + desktop app (electron)
+        graphQL instead of SPA
+        put it online for reals
+        redo in TS 
+        webassembly in C++
+        C++ with CROW 
 
     
 
