@@ -97,12 +97,23 @@ BONUS:
         game modes 
      
     MINE:
+<<<<<<< HEAD
         make an android app (react native) + desktop app (electron)
         graphQL instead of SPA
         put it online for reals
         redo in TS 
         webassembly in C++
         C++ with CROW 
+=======
+        use functional programming instead of OOP in tetris game code
+        make desktop version (electron)
+        make app version (android React-Native)
+        front in typescript (React + redux)
+        redo in webAssembly & Rust in Front 
+        back in Rust
+        use rust Rocket API (if necessary)
+        use graphQL instead of SPA 
+>>>>>>> 1473875f70ef3833cf79fa3945ac004049f80874
 
     
 
